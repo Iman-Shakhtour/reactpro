@@ -15,25 +15,12 @@ const Navbar = () => {
   };
 
   return (
-    <nav style={{ backgroundColor: "#6a0dad", padding: "10px", color: "white", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-      <div>
-        <h2 style={{ margin: 0 }}>LMS System</h2>
-      </div>
+    <nav style={navbarStyle}>
+<div style={brandStyle}>LMS System</div>
       {token && (
         <div style={{ display: "flex", alignItems: "center" }}>
           <span style={{ marginRight: "20px" }}>👋 {username}</span>
-          <button
-            onClick={handleLogout}
-            style={{
-              background: "white",
-              color: "#6a0dad",
-              border: "none",
-              padding: "8px 15px",
-              borderRadius: "6px",
-              cursor: "pointer",
-              fontWeight: "bold"
-            }}
-          >
+          <button onClick={handleLogout} style={logoutButtonStyle}>
             Logout
           </button>
         </div>
@@ -41,6 +28,36 @@ const Navbar = () => {
     </nav>
   );
 };
+const brandStyle = {
+  fontWeight: "bold",
+  fontSize: "40px",   // ⬅️ كبر الخط
+  marginLeft: "0px",  // ⬅️ ما في مسافة من اليسار
+};
+
+const navbarStyle = {
+  height: "60px",
+  backgroundColor: "#4B3FEC", // نفس لون السايدبار
+  color: "white",
+  display: "flex",
+  alignItems: "center",
+  justifyContent: "space-between",
+  padding: "0 30px",
+  position: "fixed",
+  top: 0,
+  left: "0px", // ⬅️ يبدأ بعد عرض السايدبار
+  right: 0,
+  zIndex: 1000,
+  
+};
+
+const logoutButtonStyle = {
+  backgroundColor: "white",
+  color: "#4B3FEC",
+  border: "none",
+  padding: "8px 15px",
+  borderRadius: "50px",
+  cursor: "pointer",
+  fontWeight: "bold",
+};
 
 export default Navbar;
-

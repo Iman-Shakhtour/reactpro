@@ -1,9 +1,18 @@
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+// src/components/Layout.js
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
+import Navbar from "./Navbar";
+import Sidebar from "./Sidebar";
+import { jwtDecode } from "jwt-decode";
+import { studentLinks, adminLinks } from "../utils/sidebarLinks";
 
 const Layout = () => {
-  const navigate = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
   const token = localStorage.getItem("token");
+  const role = token ? jwtDecode(token).role : null;
+
+  const noHeaderRoutes = ["/", "/signup"];
+  const shouldShowHeader = token && !noHeaderRoutes.includes(location.pathname);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -11,50 +20,32 @@ const Layout = () => {
     navigate("/");
   };
 
-  // الصفحات اللي مش لازم نظهر فيها الهيدر
-  const noHeaderRoutes = ["/", "/signup"];
-  const shouldShowHeader = token && !noHeaderRoutes.includes(location.pathname);
+  
+
+  let links = [];
+  if (role === "ROLE_STUDENT") links = studentLinks;
+  if (role === "ROLE_ADMIN") links = adminLinks;
+
+  // ممكن تضيف روابط لباقي الرولز هون كمان
 
   return (
     <div>
-      {/* ✅ نظهر الهيدر فقط لما لازم */}
-      {shouldShowHeader && (
-        <header style={headerStyle}>
-          <div style={{ fontWeight: "bold", fontSize: "24px" }}>LMS System</div>
-          <div>
-            👋 {localStorage.getItem("username") || "User"}
-            <button onClick={handleLogout} style={logoutButtonStyle}>
-              Logout
-            </button>
-          </div>
-        </header>
-      )}
+      {shouldShowHeader && <Navbar />}
 
-      <main style={{ padding: "20px" }}>
-        <Outlet /> {/* هون بنعرض الصفحات حسب الراوت */}
-      </main>
+      {shouldShowHeader ? (
+        <div style={{ display: "flex" }}>
+          <Sidebar links={links} title="Student" />
+          <div style={{ marginLeft: "50px", paddingTop: "80px", padding: "40px 40px" }}>
+  <Outlet />
+</div>
+
+      
+        </div>
+      ) : (
+        <Outlet /> // لما ما في توكن، زي صفحات اللوج إن
+      )}
     </div>
   );
-};
-
-const headerStyle = {
-  display: "flex",
-  justifyContent: "space-between",
-  alignItems: "center",
-  padding: "15px 30px",
-  backgroundColor: "#6c63ff",
-  color: "white",
-};
-
-const logoutButtonStyle = {
-  marginLeft: "20px",
-  padding: "8px 16px",
-  backgroundColor: "white",
-  color: "#6c63ff",
-  border: "none",
-  borderRadius: "8px",
-  fontWeight: "bold",
-  cursor: "pointer",
 };
 
 export default Layout;
