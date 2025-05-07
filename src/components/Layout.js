@@ -1,51 +1,70 @@
-// src/components/Layout.js
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
-import Navbar from "./Navbar";
-import Sidebar from "./Sidebar";
 import { jwtDecode } from "jwt-decode";
-import { studentLinks, adminLinks } from "../utils/sidebarLinks";
+import { HiBell } from "react-icons/hi2";
+import Sidebar from "./Sidebar";
+import { adminLinks, studentLinks } from "../utils/sidebarLinks";
 
 const Layout = () => {
-  const location = useLocation();
-  const navigate = useNavigate();
-  const token = localStorage.getItem("token");
-  const role = token ? jwtDecode(token).role : null;
+  const location  = useLocation();
+  const navigate  = useNavigate();
+  const token     = localStorage.getItem("token");
+  const username  = localStorage.getItem("username") || "User";
+  const role      = token ? jwtDecode(token).role : null;
 
+  /* صفحات بدون شريط جانبي */
   const noHeaderRoutes = ["/", "/signup"];
-  const shouldShowHeader = token && !noHeaderRoutes.includes(location.pathname);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("username");
+  const onLogout = () => {
+    localStorage.clear();
     navigate("/");
   };
 
-  
+  const links =
+    role === "ROLE_ADMIN"   ? adminLinks
+  : role === "ROLE_STUDENT" ? studentLinks
+  : [];
 
-  let links = [];
-  if (role === "ROLE_STUDENT") links = studentLinks;
-  if (role === "ROLE_ADMIN") links = adminLinks;
-
-  // ممكن تضيف روابط لباقي الرولز هون كمان
+  /* صفحات الهبوط */
+  if (noHeaderRoutes.includes(location.pathname)) return <Outlet />;
 
   return (
-    <div>
-      {shouldShowHeader && <Navbar />}
+    <>
+      {/* أيقونة إشعار ثابتة */}
+      <div style={iconBox}>
+        <HiBell size={22} style={{ cursor: "pointer" }} />
+      </div>
 
-      {shouldShowHeader ? (
-        <div style={{ display: "flex" }}>
-          <Sidebar links={links} title="Student" />
-          <div style={{ marginLeft: "50px", paddingTop: "80px", padding: "40px 40px" }}>
-  <Outlet />
-</div>
+      <div style={{ display: "flex" /* بدون paddingTop */ }}>
+        <Sidebar
+          links={links}
+          title="Hayat"
+          username={username}
+          id="E79307"
+          onLogout={onLogout}
+        />
 
-      
-        </div>
-      ) : (
-        <Outlet /> // لما ما في توكن، زي صفحات اللوج إن
-      )}
-    </div>
+        <main
+          style={{
+            flex: 1,
+            padding: "40px 60px",
+            background: "#eef5f8",
+            minHeight: "100vh",
+          }}
+        >
+          <Outlet />
+        </main>
+      </div>
+    </>
   );
+};
+
+/* أيقونة عائمة */
+const iconBox = {
+  position: "fixed",
+  top: 16,
+  right: 24,
+  zIndex: 1000,
+  color: "black",
 };
 
 export default Layout;

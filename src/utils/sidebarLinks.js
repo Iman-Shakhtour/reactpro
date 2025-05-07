@@ -1,16 +1,21 @@
 // src/utils/sidebarLinks.js
+import {
+  HiOutlineUserGroup,
+  HiOutlineBookOpen,
+  HiOutlineAcademicCap,
+  HiOutlineChartBar,
+} from "react-icons/hi2";
+
+export const adminLinks = [
+  { to: "/dashboard/manage-users",        label: "Manage Users",        icon: HiOutlineUserGroup  },
+  { to: "/dashboard/manage-courses",      label: "Manage Courses",      icon: HiOutlineBookOpen   },
+  { to: "/dashboard/manage-scholarships", label: "Manage Scholarships", icon: HiOutlineAcademicCap},
+  { to: "/dashboard/stats",               label: "System Stats",        icon: HiOutlineChartBar   },
+];
 
 export const studentLinks = [
-    { to: "/dashboard/student/courses", label: "My Courses", icon: "📚" },
-    { to: "/dashboard/student/progress", label: "My Progress", icon: "📈" },
-    { to: "/dashboard/student/profile", label: "My Profile", icon: "🙍‍♂️" },
-    { to: "/dashboard/student/scholarships", label: "My Scholarships", icon: "🎓" },
-  ];
-  
-  export const adminLinks = [
-    { to: "/dashboard/manage-users", label: "Manage Users", icon: "👥" },
-    { to: "/dashboard/manage-courses", label: "Manage Courses", icon: "📚" },
-    { to: "/dashboard/manage-scholarships", label: "Manage Scholarships", icon: "🎓" },
-    { to: "/dashboard/stats", label: "System Statistics", icon: "📊" },
-  ];
-  
+  { to: "/dashboard/student/courses",      label: "My Courses",      icon: HiOutlineBookOpen    },
+  { to: "/dashboard/student/progress",     label: "My Progress",     icon: HiOutlineChartBar    },
+  { to: "/dashboard/student/profile",      label: "My Profile",      icon: HiOutlineUserGroup   },
+  { to: "/dashboard/student/scholarships", label: "My Scholarships", icon: HiOutlineAcademicCap },
+];

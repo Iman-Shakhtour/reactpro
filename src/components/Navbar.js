@@ -1,63 +1,36 @@
-import React from "react";
-import { useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { HiBell, HiChatBubbleLeftRight } from "react-icons/hi2";
 
 const Navbar = () => {
-  const navigate = useNavigate();
   const token = localStorage.getItem("token");
-  const username = localStorage.getItem("username") || "User";
-
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    localStorage.removeItem("username");
-    toast.success("✅ Logged out successfully!");
-    navigate("/");
-  };
+  if (!token) return null;        // إخفاء الهيدر في صفحات غير محمية
 
   return (
-    <nav style={navbarStyle}>
-<div style={brandStyle}>LMS System</div>
-      {token && (
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <span style={{ marginRight: "20px" }}>👋 {username}</span>
-          <button onClick={handleLogout} style={logoutButtonStyle}>
-            Logout
-          </button>
-        </div>
-      )}
-    </nav>
+    <header style={header}>
+      <div />                     {/* يسار الهيدر فارغ */}
+      <div style={icons}>
+        <HiBell size={22} style={icon} />
+        <HiChatBubbleLeftRight size={22} style={icon} />
+      </div>
+    </header>
   );
 };
-const brandStyle = {
-  fontWeight: "bold",
-  fontSize: "40px",   // ⬅️ كبر الخط
-  marginLeft: "0px",  // ⬅️ ما في مسافة من اليسار
-};
 
-const navbarStyle = {
-  height: "60px",
-  backgroundColor: "#4B3FEC", // نفس لون السايدبار
-  color: "white",
+/* ---------- styles ---------- */
+const header = {
+  height: 60,
+  width: "100%",
+  position: "fixed",
+  top: 0,
+  left: 0,
   display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
-  padding: "0 30px",
-  position: "fixed",
-  top: 0,
-  left: "0px", // ⬅️ يبدأ بعد عرض السايدبار
-  right: 0,
-  zIndex: 1000,
-  
+  padding: "0 24px",
+  background: "transparent",
+  zIndex: 999,
 };
 
-const logoutButtonStyle = {
-  backgroundColor: "white",
-  color: "#4B3FEC",
-  border: "none",
-  padding: "8px 15px",
-  borderRadius: "50px",
-  cursor: "pointer",
-  fontWeight: "bold",
-};
+const icons = { display: "flex", gap: 18 };
+const icon  = { cursor: "pointer" };
 
 export default Navbar;
