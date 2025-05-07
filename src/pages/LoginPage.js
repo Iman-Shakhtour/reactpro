@@ -8,7 +8,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false); // ✨ حالة التحميل
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -21,14 +21,21 @@ const LoginPage = () => {
       });
 
       const { token } = response.data;
-      localStorage.setItem("token", token);
-      localStorage.setItem("username", username);
 
+      // ✅ Decode token
       const decoded = jwtDecode(token);
       const role = decoded.role;
+      const userId = decoded.id; // <-- Make sure this exists in your JWT
+
+      // ✅ Store in localStorage
+      localStorage.setItem("token", token);
+      localStorage.setItem("username", username);
+      localStorage.setItem("role", role);
+      localStorage.setItem("userId", userId); // ✅ Save instructor ID for API use
 
       toast.success("✅ Login successful!");
 
+      // ✅ Redirect by role
       if (role === "ROLE_ADMIN") {
         navigate("/dashboard/admin");
       } else if (role === "ROLE_INSTRUCTOR") {
@@ -87,7 +94,7 @@ const LoginPage = () => {
   );
 };
 
-// 🔥 CSS Styles
+// 💅 Styles
 const containerStyle = {
   minHeight: "100vh",
   display: "flex",
