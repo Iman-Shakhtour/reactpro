@@ -17,13 +17,14 @@ import ManageScholarshipsPage from "./pages/admin/ManageScholarshipsPage";
 
 // Instructor pages
 import InstructorDashboard from "./pages/instructor/InstructorDashboard";
-import MyAssignments from "./pages/instructor/ManageAssignments";
-import UploadContent from "./pages/instructor/UploadContent";
+import ContentPage from "./pages/instructor/ContentPage";
+import ManageAssignments from "./pages/instructor/ManageAssignments";
 import SubmittedAssignments from "./pages/instructor/SubmittedAssignments";
-import EditProfile from "./pages/instructor/EditProfile";
-import UploadedContentList from "./pages/instructor/UploadedContentList";
 import ViewEnrolledStudents from "./pages/instructor/ViewEnrolledStudents";
+import EditProfile from "./pages/instructor/EditProfile";
 import CourseDetails from "./pages/instructor/CourseDetails";
+
+
 
 // Student pages
 import StudentDashboard from "./pages/student/StudentDashboard";
@@ -90,15 +91,14 @@ function App() {
     </ProtectedRoute>
   }
 >
-  <Route path="courses" element={<UploadContent />} />
-  <Route path="assignments" element={<MyAssignments />} />
-  <Route path="upload-content" element={<UploadContent />} />
+  <Route path="content" element={<ContentPage />} />
+  <Route path="assignments" element={<ManageAssignments />} />
   <Route path="submissions" element={<SubmittedAssignments />} />
-  <Route path="edit-profile" element={<EditProfile />} />
-  <Route path="uploaded-content" element={<UploadedContentList />} />
   <Route path="enrolled-students" element={<ViewEnrolledStudents />} />
+  <Route path="edit-profile" element={<EditProfile />} />
   <Route path="course-details/:courseId" element={<CourseDetails />} />
 </Route>
+
 
           {/* Donor */}
           <Route

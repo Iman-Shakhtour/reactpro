@@ -1,6 +1,8 @@
+// src/pages/instructor/ViewEnrolledStudents.js
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../api/axiosInstance";
 import { toast } from "react-toastify";
+import { HiUsers } from "react-icons/hi2";
 
 const ViewEnrolledStudents = () => {
   const [courses, setCourses] = useState([]);
@@ -8,18 +10,17 @@ const ViewEnrolledStudents = () => {
   const [students, setStudents] = useState([]);
 
   useEffect(() => {
+    const fetchCourses = async () => {
+      try {
+        const res = await axiosInstance.get("/api/instructors/me/courses");
+        setCourses(res.data);
+      } catch (error) {
+        toast.error("Failed to load courses.");
+      }
+    };
+
     fetchCourses();
   }, []);
-
-  const fetchCourses = async () => {
-    try {
-      const res = await axiosInstance.get("/api/instructors/me/courses");
-      setCourses(res.data);
-    } catch (error) {
-      console.error("Error fetching courses:", error);
-      toast.error("Failed to load courses.");
-    }
-  };
 
   const fetchEnrolledStudents = async () => {
     try {
@@ -28,20 +29,24 @@ const ViewEnrolledStudents = () => {
       );
       setStudents(res.data);
     } catch (error) {
-      console.error("Error fetching students:", error);
       toast.error("Failed to load students.");
     }
   };
 
   return (
-    <div className="min-h-screen p-8 bg-gray-50">
-      <div className="max-w-4xl mx-auto bg-white rounded-xl shadow p-6">
-        <h2 className="text-2xl font-bold text-indigo-700 mb-4">👩‍🎓 Enrolled Students</h2>
-        <div className="mb-6 flex items-center gap-4">
+    <div style={styles.page}>
+      <h2 style={styles.heading}>
+        <HiUsers style={{ marginRight: 10 }} />
+        Enrolled Students
+      </h2>
+      <p style={styles.subtext}>Select a course to view its enrolled students.</p>
+
+      <div style={styles.card}>
+        <div style={styles.controls}>
           <select
-            className="border border-gray-300 rounded px-4 py-2 w-full"
             value={selectedCourseId}
             onChange={(e) => setSelectedCourseId(e.target.value)}
+            style={styles.select}
           >
             <option value="">-- Select a Course --</option>
             {courses.map((course) => (
@@ -52,7 +57,7 @@ const ViewEnrolledStudents = () => {
           </select>
           <button
             onClick={fetchEnrolledStudents}
-            className="bg-indigo-600 text-white px-4 py-2 rounded shadow hover:bg-indigo-700"
+            style={styles.button}
             disabled={!selectedCourseId}
           >
             View Students
@@ -60,22 +65,85 @@ const ViewEnrolledStudents = () => {
         </div>
 
         {students.length > 0 ? (
-          <ul className="space-y-3">
+          <ul style={styles.list}>
             {students.map((student) => (
-              <li
-                key={student.id}
-                className="border rounded-lg px-4 py-3 shadow bg-gray-100"
-              >
+              <li key={student.id} style={styles.listItem}>
                 <strong>{student.fullName}</strong> — {student.email}
               </li>
             ))}
           </ul>
         ) : (
-          <p className="text-gray-500">No students enrolled or course not selected.</p>
+          <p style={styles.empty}>
+            No students enrolled or no course selected.
+          </p>
         )}
       </div>
     </div>
   );
+};
+
+const styles = {
+  page: {
+    padding: "30px 60px",
+  },
+  heading: {
+    fontSize: 26,
+    fontWeight: "bold",
+    color: "#001943",
+    display: "flex",
+    alignItems: "center",
+  },
+  subtext: {
+    color: "#666",
+    marginBottom: 24,
+  },
+  card: {
+    background: "#fff",
+    borderRadius: 12,
+    padding: 30,
+    boxShadow: "0 0 0 2px #d6ecff",
+  },
+  controls: {
+    display: "flex",
+    gap: 12,
+    flexWrap: "wrap",
+    marginBottom: 24,
+  },
+  select: {
+    padding: "10px",
+    fontSize: 15,
+    borderRadius: 8,
+    border: "1px solid #ccc",
+  },
+  button: {
+    background: "#001943",
+    color: "#fff",
+    padding: "10px 20px",
+    borderRadius: 50,
+    border: "none",
+    fontWeight: 500,
+    cursor: "pointer",
+  },
+  list: {
+    display: "flex",
+    flexDirection: "column",
+    gap: 12,
+  },
+  listItem: {
+    padding: "12px 16px",
+    backgroundColor: "#f4f4f4",
+    borderRadius: 8,
+    fontSize: 15,
+    color: "#333",
+    boxShadow: "0 0 0 1px #eee",
+  },
+  empty: {
+    background: "#fff8e1",
+    padding: 16,
+    borderRadius: 8,
+    color: "#8d6e63",
+    border: "1px solid #ffe082",
+  },
 };
 
 export default ViewEnrolledStudents;

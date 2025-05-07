@@ -1,26 +1,15 @@
+// src/pages/instructor/InstructorDashboard.js
 import { Outlet } from "react-router-dom";
-import Sidebar from "../../components/Sidebar";
 
 const InstructorDashboard = () => {
-  const instructorLinks = [
-    { to: "upload-content", label: "Upload Content", icon: "📤" },
-    { to: "assignments", label: "Manage Assignments", icon: "📝" },
-    { to: "submissions", label: "Submitted Assignments", icon: "📄" },
-    { to: "uploaded-content", label: "Uploaded Content", icon: "📂" },
-    { to: "enrolled-students", label: "Enrolled Students", icon: "👥" },
-    { to: "edit-profile", label: "Edit Profile", icon: "🛠️" },
-  ];
+  const username = localStorage.getItem("username") || "Instructor";
 
   return (
-    <div style={{ display: "flex" }}>
-      <Sidebar links={instructorLinks} title="Instructor Panel" />
-      <div style={{ marginLeft: "240px", padding: "30px", flex: 1 }}>
-        <h2>👨‍🏫 Instructor Dashboard</h2>
-        <p>Welcome Instructor! Use the sidebar to manage your tasks.</p>
-        <div style={{ marginTop: "30px" }}>
-          <Outlet />
-        </div>
-      </div>
+    <div style={{ padding: "30px 60px" }}>
+      <h1 style={{ marginTop: 0 }}>Instructor Dashboard</h1>
+      <p>Welcome&nbsp;Back,&nbsp;{username}</p>
+
+      <Outlet />
     </div>
   );
 };

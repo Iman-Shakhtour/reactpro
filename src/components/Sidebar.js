@@ -1,67 +1,148 @@
+// src/components/Sidebar.js
 import { NavLink } from "react-router-dom";
+import {
+  HiUserGroup,
+  HiBookOpen,
+  HiAcademicCap,
+  HiChartBar,
+  HiCog,
+  HiArrowRightOnRectangle,
+  HiDocumentText,
+  HiClipboardDocumentList,
+  HiUserCircle,
+  HiUsers,
+} from "react-icons/hi2";
 
-const Sidebar = ({ links = [], title = "Dashboard" }) => {
-  return (
-    <aside style={sidebarStyle}>
-      <h2 style={titleStyle}>{title}</h2>
-      <nav style={linkContainer}>
-        {links.map(({ to, label, icon }) => (
-          <NavLink
-            key={to}
-            to={to}
-            style={getLinkStyle}
-            end // مهم إذا كنت تستخدم nested routes
-          >
-            {icon} <span style={{ marginLeft: "10px" }}>{label}</span>
-          </NavLink>
-        ))}
-      </nav>
-    </aside>
-  );
+/* ---------- CONFIG ---------- */
+const BLUE = "#001943";
+const SKY = "#d6ecff";
+const SKY_H = "#bfe1ff";
+const BTN_H = 48;
+const FONT = { fontFamily: "'Inter', sans-serif", fontWeight: 300 };
+
+/* ---------- COMPONENT ---------- */
+const Sidebar = ({ links, title, username, onLogout }) => (
+  <aside style={st.wrapper}>
+    {/* Logo / Brand */}
+    <div style={st.logo}>
+      <span style={st.logoText}>Hayat LMS</span>
+    </div>
+
+    {/* User Card */}
+    <div style={st.card}>
+      <img
+        src={`https://api.dicebear.com/6.x/bottts/svg?seed=${username}`}
+        alt="avatar"
+        style={st.avatar}
+      />
+      <span style={st.hello}>Hi,&nbsp;{username}</span>
+    </div>
+
+    {/* Navigation */}
+    <nav style={st.nav}>
+      {links.map(({ to, label }) => (
+        <NavLink key={to} to={to} end style={mainBtn}>
+          {iconPicker[label]} <span style={{ marginLeft: 12 }}>{label}</span>
+        </NavLink>
+      ))}
+
+      {/* Settings */}
+      <NavLink to="#" style={mainBtn({ isActive: false })}>
+        <HiCog size={18} style={{ marginRight: 12 }} /> Settings
+      </NavLink>
+    </nav>
+
+    <div style={{ flex: 1 }} />
+
+    {/* Logout */}
+    <button onClick={onLogout} style={logoutBtn}>
+      <HiArrowRightOnRectangle size={18} style={{ marginRight: 12 }} />
+      Log&nbsp;out
+    </button>
+  </aside>
+);
+
+/* ---------- STYLES ---------- */
+const st = {
+  wrapper: {
+    ...FONT,
+    width: 300,
+    height: "100vh",
+    background: BLUE,
+    color: "white",
+    padding: 24,
+    display: "flex",
+    flexDirection: "column",
+    borderRadius: 12,
+    boxShadow: "0 0 0 2px #00a3ff",
+    boxSizing: "border-box",
+  },
+  logo: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 32,
+  },
+  logoText: {
+    fontSize: 35,
+    fontWeight: 600,
+    fontFamily: "'Quicksand', sans-serif",
+    letterSpacing: "0.5px",
+  },
+  card: {
+    alignSelf: "center",
+    width: "79%",
+    display: "flex",
+    alignItems: "center",
+    gap: 14,
+    background: "#002357",
+    padding: 14,
+    borderRadius: 10,
+    marginBottom: 36,
+  },
+  avatar: { width: 50, height: 50, borderRadius: "50%" },
+  hello: { fontSize: 15, fontWeight: 500 },
+  nav: { display: "flex", flexDirection: "column", gap: 18 },
 };
 
-const sidebarStyle = {
-  height: "100vh",             // ⬅️ يغطي طول الشاشة
-  width: "240px",
-  backgroundColor: "#4B3FEC", // نفس لون navbar
-  color: "white",
-  padding: "30px 20px",
-  display: "flex",
-  flexDirection: "column",
-  position: "fixed",           // ⬅️ ثابت عالشمال
-  top: 0,
-  left: 0,
-  borderTopRightRadius: "20px",   // زاوية علوية ناعمة
-  borderBottomRightRadius: "20px",
-  boxShadow: "2px 0 10px rgba(0, 0, 0, 0.1)", // ظل ناعم من اليمين
-};
-
-const titleStyle = {
-  margin: 0,
-  marginTop: "70px",     // ⬅️ نزله لتحت
-
-  marginBottom: "70px",
-  fontSize: "22px",
-  fontWeight: "bold",
-};
-
-const linkContainer = {
-  display: "flex",
-  flexDirection: "column",
-  gap: "12px",
-};
-
-const getLinkStyle = ({ isActive }) => ({
-  color: isActive ? "#4B3FEC" : "white",
-  backgroundColor: isActive ? "white" : "transparent",
-  padding: "20px 15px", // ⬅️ زيدنا حجم البادينغ
-  borderRadius: "50px", // ⬅️ ممكن تخلي الزوايا أنعم
-  fontSize: "20px",     // ⬅️ كبر الخط
-  textDecoration: "none",
-  fontWeight: "bold",
+/* ---------- BUTTONS ---------- */
+const mainBtn = ({ isActive = false } = {}) => ({
+  alignSelf: "center",
+  width: "85%",
+  height: BTN_H,
   display: "flex",
   alignItems: "center",
-  transition: "0.3s",
+  justifyContent: "flex-start",
+  background: isActive ? SKY_H : SKY,
+  color: BLUE,
+  paddingLeft: 18,
+  borderRadius: 10,
+  fontSize: 15,
+  fontWeight: 500,
+  textDecoration: "none",
+  transition: ".15s",
 });
+
+const logoutBtn = {
+  ...mainBtn(),
+  background: "#ffefef",
+  color: "#c0392b",
+  border: "none",
+  cursor: "pointer",
+  width: 150,
+};
+
+/* ---------- ICON MAPPING ---------- */
+const iconPicker = {
+  "Manage Users": <HiUserGroup size={18} />,
+  "Manage Courses": <HiBookOpen size={18} />,
+  "Manage Scholarships": <HiAcademicCap size={18} />,
+  "System Stats": <HiChartBar size={18} />,
+  "Manage Content": <HiDocumentText size={18} />,
+  "Manage Assignments": <HiClipboardDocumentList size={18} />,
+  "Submitted Assignments": <HiClipboardDocumentList size={18} />,
+  "Edit Profile": <HiUserCircle size={18} />,
+  "Enrolled Students": <HiUsers size={18} />,
+};
 
 export default Sidebar;
