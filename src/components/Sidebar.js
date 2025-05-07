@@ -19,7 +19,13 @@ const FONT  = { fontFamily: "'Inter', sans-serif", fontWeight: 300 };
 /* ---------- COMPONENT ---------- */
 const Sidebar = ({ links, title, username, onLogout }) => (
   <aside style={st.wrapper}>
-    <h1 style={st.brand}>{title}</h1>
+<div style={st.logo}>
+  
+  <span style={st.logoText}>Hayat LMS</span>
+</div>
+
+
+
 
     {/* بطاقة المستخدم */}
     <div style={st.card}>
@@ -78,8 +84,8 @@ const st = {
     letterSpacing: 1,
   },
   card: {
-    alignSelf: "left",
-    width: "75%",        /* نفس عرض الأزرار */
+    alignSelf: "center",
+    width: "79%",        /* نفس عرض الأزرار */
     display: "flex",
     alignItems: "center",
     gap: 14,
@@ -91,12 +97,31 @@ const st = {
   avatar: { width: 50, height: 50, borderRadius: "50%" },
   hello:  { fontSize: 15, fontWeight: 500 },
   nav:    { display: "flex", flexDirection: "column", gap: 18 },
+  logo: {
+    display: "flex",
+    alignItems: "center",
+    gap: 10,
+    marginBottom: 32,
+  },
+  
+  
+  logoText: {
+    alignItems: "center",
+    fontSize: 35,
+    fontWeight: 600,
+    letterSpacing: "0.5px",
+    fontFamily: "'Quicksand', sans-serif",  // أو 'Nunito'
+    
+  
+  },
+  
+  
 };
 
 /* زر الملاحة الرئيسى (و Settings) */
 const mainBtn = ({ isActive = false } = {}) => ({
-  alignSelf: "left",
-  width: "77%",               /* أضيق من كامل السايدبار */
+  alignSelf: "center",
+  width: "85%",               /* أضيق من كامل السايدبار */
   height: BTN_H,
   display: "flex",
   alignItems: "center",
@@ -109,7 +134,8 @@ const mainBtn = ({ isActive = false } = {}) => ({
   fontWeight: 500,
   textDecoration: "none",
   transition: ".15s",
-});
+}
+);
 
 /* زر Log‑out */
 const logoutBtn = {
@@ -118,6 +144,9 @@ const logoutBtn = {
   color: "#c0392b",
   border: "none",
   cursor: "pointer",
+  width:150,
+  
+
 };
 
 /* ---------- ICON MAPPER ---------- */
