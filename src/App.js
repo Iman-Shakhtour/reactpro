@@ -15,9 +15,10 @@ import ProtectedRoute from "./components/ProtectedRoute";
 // 👨‍🎓 Student Pages
 import StudentDashboard from "./pages/student/StudentDashboard";
 import MyCourses from "./pages/student/MyCourses";
-import MyProgress from "./pages/student/MyProgress";
 import MyProfile from "./pages/student/MyProfile";
-import MyScholarships from "./pages/student/MyScholarships";
+import Scholarships from "./pages/student/Scholarships";
+import MyAssignments from "./pages/student/MyAssignments";
+import Settings from "./pages/student/Settings"; // 👈 أضف هذا
 
 // 👩‍💼 Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -77,9 +78,10 @@ function App() {
             }
           >
             <Route path="courses" element={<MyCourses />} />
-            <Route path="progress" element={<MyProgress />} />
             <Route path="profile" element={<MyProfile />} />
-            <Route path="scholarships" element={<MyScholarships />} />
+            <Route path="scholarships" element={<Scholarships />} />
+            <Route path="assignments" element={<MyAssignments />} />
+            <Route path="settings" element={<Settings />} /> 
           </Route>
 
           {/* 🧑‍🏫 Instructor */}

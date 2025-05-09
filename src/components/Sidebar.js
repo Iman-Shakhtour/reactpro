@@ -30,26 +30,25 @@ const Sidebar = ({ links, title, username, onLogout }) => (
     {/* بطاقة المستخدم */}
     <div style={st.card}>
       <img
-        src={`https://api.dicebear.com/6.x/bottts/svg?seed=${username}`}
-        alt="avatar"
-        style={st.avatar}
-      />
+  src={
+    localStorage.getItem("profileImage") ||
+    `https://api.dicebear.com/6.x/bottts/svg?seed=${username}`
+  }
+  alt="avatar"
+  style={st.avatar}
+/>
+
       <span style={st.hello}>Hi,&nbsp;{username}</span>
     </div>
 
     {/* الملاحة + Settings */}
-    <nav style={st.nav}>
-      {links.map(({ to, label }) => (
-        <NavLink key={to} to={to} end style={mainBtn}>
-          {iconPicker[label]} <span style={{ marginLeft: 12 }}>{label}</span>
-        </NavLink>
-      ))}
+    {links.map(({ to, label, icon }) => (
+  <NavLink key={to} to={to} end style={mainBtn}>
+    {icon && <span style={{ marginRight: 10 }}>{icon}</span>}
+    <span>{label}</span>
+  </NavLink>
+))}
 
-      {/* Settings أصبح هنا مباشرةً بعد System Stats */}
-      <NavLink to="#" style={mainBtn({ isActive: false })}>
-        <HiCog size={18} style={{ marginRight: 12 }} /> Settings
-      </NavLink>
-    </nav>
 
     <div style={{ flex: 1 }} />
 

@@ -15,7 +15,9 @@ export const adminLinks = [
 
 export const studentLinks = [
   { to: "/dashboard/student/courses",      label: "My Courses",      icon: HiOutlineBookOpen    },
-  { to: "/dashboard/student/progress",     label: "My Progress",     icon: HiOutlineChartBar    },
   { to: "/dashboard/student/profile",      label: "My Profile",      icon: HiOutlineUserGroup   },
-  { to: "/dashboard/student/scholarships", label: "My Scholarships", icon: HiOutlineAcademicCap },
+  { to: "/dashboard/student/scholarships", label: "Scholarships", icon: HiOutlineAcademicCap },
+  { to: "/dashboard/student/assignments",  label: "My Assignments",  icon: HiOutlineBookOpen    },
+  { to: "/dashboard/student/settings",     label: "Settings",        icon: HiOutlineChartBar    }, // ✅ أضف هذا السطر
+
 ];
