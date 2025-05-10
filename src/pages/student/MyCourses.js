@@ -1,23 +1,27 @@
 import React, { useEffect, useState } from "react";
-import axios from "../../api/axiosInstance";
+import studentApi from "../../api/studentApi";
+import { toast } from "react-toastify";
 
 const MyCourses = () => {
   const [enrollments, setEnrollments] = useState([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchEnrollments = async () => {
       try {
-        const studentRes = await axios.get("/api/students/me");
-        const studentId = studentRes.data.content.id;
+        const stuRes = await studentApi.getProfile();
+        const studentId = stuRes.data.content?.id ?? stuRes.data.id;
 
-        const response = await axios.get(`/api/enrollments/student/${studentId}`);
-        const enrollmentList = response.data.map(e => e.content);
-        setEnrollments(enrollmentList);
-      } catch (error) {
-        console.error("❌ Failed to fetch enrollments:", error);
+        const enRes = await studentApi.getEnrollments(studentId);
+        const list = enRes.data.map((e) => e.content ?? e);
+        setEnrollments(list);
+      } catch (err) {
+        console.error("❌ Failed to fetch enrollments:", err);
+        toast.error("❌ Failed to fetch enrollments");
+      } finally {
+        setLoading(false);
       }
     };
-
     fetchEnrollments();
   }, []);
 
@@ -27,53 +31,59 @@ const MyCourses = () => {
         📚 My Courses & Progress
       </h2>
 
-      <table style={tableStyle}>
-        <thead>
-          <tr style={{ background: "#f4f7fb" }}>
-            <th style={thStyle}>Title</th>
-            <th style={thStyle}>Description</th>
-            <th style={thStyle}>Type</th>
-            <th style={thStyle}>Price</th>
-            <th style={thStyle}>Progress</th>
-            <th style={thStyle}>Status</th>
-          </tr>
-        </thead>
-        <tbody>
-          {enrollments.length === 0 ? (
-            <tr>
-              <td colSpan="6" style={{ textAlign: "center", padding: "20px" }}>
-                You are not enrolled in any courses.
-              </td>
+      {loading ? (
+        <p>Loading...</p>
+      ) : (
+        <table style={tableStyle}>
+          <thead>
+            <tr style={{ background: "#f4f7fb" }}>
+              <th style={thStyle}>Title</th>
+              <th style={thStyle}>Description</th>
+              <th style={thStyle}>Type</th>
+              <th style={thStyle}>Price</th>
+              <th style={thStyle}>Progress</th>
+              <th style={thStyle}>Status</th>
             </tr>
-          ) : (
-            enrollments.map((enroll) => (
-              <tr key={enroll.id}>
-                <td style={tdStyle}>{enroll.course.title}</td>
-                <td style={tdStyle}>{enroll.course.description}</td>
-                <td style={tdStyle}>{enroll.course.isFree ? "Free" : "Paid"}</td>
-                <td style={tdStyle}>{enroll.course.isFree ? "—" : `$${enroll.course.price}`}</td>
-                <td style={tdStyle}>
-                  <div style={progressBarContainer}>
-                    <div
-                      style={{
-                        ...progressBarFill,
-                        width: `${enroll.progress.toFixed(0)}%`,
-                        backgroundColor: enroll.completed ? "#4CAF50" : "#2196F3",
-                      }}
-                    />
-                  </div>
-                  <span style={{ fontSize: "12px" }}>
-                    {enroll.progress.toFixed(0)}%
-                  </span>
-                </td>
-                <td style={tdStyle}>
-                  {enroll.completed ? "✅ Completed" : "⏳ In Progress"}
+          </thead>
+          <tbody>
+            {enrollments.length === 0 ? (
+              <tr>
+                <td colSpan="6" style={{ textAlign: "center", padding: "20px" }}>
+                  You are not enrolled in any courses.
                 </td>
               </tr>
-            ))
-          )}
-        </tbody>
-      </table>
+            ) : (
+              enrollments.map((enroll) => (
+                <tr key={enroll.id}>
+                  <td style={tdStyle}>{enroll.courseTitle || "-"}</td>
+                  <td style={tdStyle}>{enroll.courseDescription || "-"}</td>
+                  <td style={tdStyle}>{enroll.courseIsFree ? "Free" : "Paid"}</td>
+                  <td style={tdStyle}>
+                    {enroll.courseIsFree ? "—" : `$${enroll.coursePrice ?? "N/A"}`}
+                  </td>
+                  <td style={tdStyle}>
+                    <div style={progressBarContainer}>
+                      <div
+                        style={{
+                          ...progressBarFill,
+                          width: `${enroll.progress?.toFixed?.(0) ?? 0}%`,
+                          backgroundColor: enroll.completed ? "#4CAF50" : "#2196F3",
+                        }}
+                      />
+                    </div>
+                    <span style={{ fontSize: "12px" }}>
+                      {enroll.progress?.toFixed?.(0) ?? 0}%
+                    </span>
+                  </td>
+                  <td style={tdStyle}>
+                    {enroll.completed ? "✅ Completed" : "⏳ In Progress"}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
+      )}
     </div>
   );
 };

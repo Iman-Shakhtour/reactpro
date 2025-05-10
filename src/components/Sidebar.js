@@ -1,11 +1,9 @@
-// src/components/Sidebar.js
-import { NavLink }                       from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import {
   HiUserGroup,
   HiBookOpen,
   HiAcademicCap,
   HiChartBar,
-  HiCog,
   HiArrowRightOnRectangle,
 } from "react-icons/hi2";
 
@@ -17,42 +15,44 @@ const BTN_H = 48;
 const FONT  = { fontFamily: "'Inter', sans-serif", fontWeight: 300 };
 
 /* ---------- COMPONENT ---------- */
-const Sidebar = ({ links, title, username, onLogout }) => (
+const Sidebar = ({ links, title, username = "User", onLogout = () => {} }) => (
   <aside style={st.wrapper}>
-<div style={st.logo}>
-  
-  <span style={st.logoText}>Hayat LMS</span>
-</div>
-
-
-
+    {/* الشعار */}
+    <div style={st.logo}>
+      <span style={st.logoText}>Hayat&nbsp;LMS</span>
+    </div>
 
     {/* بطاقة المستخدم */}
     <div style={st.card}>
       <img
-  src={
-    localStorage.getItem("profileImage") ||
-    `https://api.dicebear.com/6.x/bottts/svg?seed=${username}`
-  }
-  alt="avatar"
-  style={st.avatar}
-/>
-
+        src={
+          localStorage.getItem("profileImage") ||
+          `https://api.dicebear.com/6.x/bottts/svg?seed=${username}`
+        }
+        alt="avatar"
+        style={st.avatar}
+      />
       <span style={st.hello}>Hi,&nbsp;{username}</span>
     </div>
 
-    {/* الملاحة + Settings */}
-    {links.map(({ to, label, icon }) => (
-  <NavLink key={to} to={to} end style={mainBtn}>
-    {icon && <span style={{ marginRight: 10 }}>{icon}</span>}
-    <span>{label}</span>
-  </NavLink>
-))}
-
+    {/* روابط الملاحة */}
+    <nav style={st.nav}>
+      {links.map(({ to, label, icon }) => (
+        <NavLink
+          key={to}
+          to={to}
+          style={({ isActive }) => mainBtn(isActive)}
+          end
+        >
+          {icon && <span style={{ marginRight: 10 }}>{icon}</span>}
+          <span>{label}</span>
+        </NavLink>
+      ))}
+    </nav>
 
     <div style={{ flex: 1 }} />
 
-    {/* Log‑out بالأسفل كما هو */}
+    {/* زر تسجيل الخروج */}
     <button onClick={onLogout} style={logoutBtn}>
       <HiArrowRightOnRectangle size={18} style={{ marginRight: 12 }} />
       Log&nbsp;out
@@ -72,19 +72,19 @@ const st = {
     display: "flex",
     flexDirection: "column",
     borderRadius: 12,
-    boxShadow: "0 0 0 2px #00a3ff",
     boxSizing: "border-box",
   },
-  brand: {
-    margin: 0,
+  logo: {
     marginBottom: 32,
-    fontSize: 28,        /* أكبر قليلاً */
-    fontWeight: 500,
-    letterSpacing: 1,
+  },
+  logoText: {
+    fontSize: 32,
+    fontWeight: 600,
+    fontFamily: "'Quicksand', sans-serif",
   },
   card: {
     alignSelf: "center",
-    width: "79%",        /* نفس عرض الأزرار */
+    width: "85%",
     display: "flex",
     alignItems: "center",
     gap: 14,
@@ -96,36 +96,16 @@ const st = {
   avatar: { width: 50, height: 50, borderRadius: "50%" },
   hello:  { fontSize: 15, fontWeight: 500 },
   nav:    { display: "flex", flexDirection: "column", gap: 18 },
-  logo: {
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
-    marginBottom: 32,
-  },
-  
-  
-  logoText: {
-    alignItems: "center",
-    fontSize: 35,
-    fontWeight: 600,
-    letterSpacing: "0.5px",
-    fontFamily: "'Quicksand', sans-serif",  // أو 'Nunito'
-    
-  
-  },
-  
-  
 };
 
-/* زر الملاحة الرئيسى (و Settings) */
-const mainBtn = ({ isActive = false } = {}) => ({
-  alignSelf: "center",
-  width: "85%",               /* أضيق من كامل السايدبار */
+/* زر NavLink */
+const mainBtn = (active) => ({
+  width: "85%",
   height: BTN_H,
+  alignSelf: "center",
   display: "flex",
   alignItems: "center",
-  justifyContent: "flex-start",
-  background: isActive ? SKY_H : SKY,
+  background: active ? SKY_H : SKY,
   color: BLUE,
   paddingLeft: 18,
   borderRadius: 10,
@@ -133,27 +113,15 @@ const mainBtn = ({ isActive = false } = {}) => ({
   fontWeight: 500,
   textDecoration: "none",
   transition: ".15s",
-}
-);
+});
 
 /* زر Log‑out */
 const logoutBtn = {
-  ...mainBtn(),
+  ...mainBtn(false),
   background: "#ffefef",
   color: "#c0392b",
   border: "none",
   cursor: "pointer",
-  width:150,
-  
-
-};
-
-/* ---------- ICON MAPPER ---------- */
-const iconPicker = {
-  "Manage Users":        <HiUserGroup size={18} />,
-  "Manage Courses":      <HiBookOpen   size={18} />,
-  "Manage Scholarships": <HiAcademicCap size={18} />,
-  "System Stats":        <HiChartBar   size={18} />,
 };
 
 export default Sidebar;

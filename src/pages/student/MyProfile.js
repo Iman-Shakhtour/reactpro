@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axiosInstance from "../../api/axiosInstance";
+import studentApi from "../../api/studentApi";
 import { toast } from "react-toastify";
 
 const MyProfile = () => {
@@ -11,10 +11,9 @@ const MyProfile = () => {
   });
 
   useEffect(() => {
-    axiosInstance
-      .get("/api/students/me")
+    studentApi
+      .getProfile()
       .then((res) => {
-        // يدعم HATEOAS أو ردّ بسيط
         const data = res.data.content ?? res.data;
         setStudent({
           fullName: data.fullName || "",
@@ -26,13 +25,9 @@ const MyProfile = () => {
       .catch(() => toast.error("❌ Failed to load profile."));
   }, []);
 
-  const styles = {
-    wrapper: {
-      display: "flex",
-      gap: "24px",
-      padding: "24px",
-      flexWrap: "wrap",
-    },
+  /* ---------- Styles ---------- */
+  const st = {
+    wrapper: { display: "flex", gap: 24, padding: 24, flexWrap: "wrap" },
     card: {
       flex: 1,
       background: "#fff",
@@ -41,26 +36,10 @@ const MyProfile = () => {
       padding: 24,
       minWidth: 300,
     },
-    sectionTitle: {
-      fontSize: 20,
-      fontWeight: 600,
-      color: "#111827",
-      marginBottom: 16,
-    },
-    infoGroup: {
-      marginBottom: 16,
-    },
-    label: {
-      display: "block",
-      fontSize: 13,
-      color: "#6b7280",
-      marginBottom: 4,
-    },
-    value: {
-      fontSize: 15,
-      color: "#111827",
-      fontWeight: 500,
-    },
+    sectionTitle: { fontSize: 20, fontWeight: 600, marginBottom: 16 },
+    label: { display: "block", fontSize: 13, color: "#6b7280", marginBottom: 4 },
+    value: { fontSize: 15, fontWeight: 500 },
+    center: { textAlign: "center" },
     avatar: {
       width: 96,
       height: 96,
@@ -68,45 +47,38 @@ const MyProfile = () => {
       objectFit: "cover",
       marginBottom: 16,
     },
-    center: {
-      textAlign: "center",
-    },
   };
 
   return (
-    <section style={styles.wrapper}>
-      <div style={{ ...styles.card, ...styles.center }}>
+    <section style={st.wrapper}>
+      {/* كرت الصورة */}
+      <div style={{ ...st.card, ...st.center }}>
         <img
           src={`https://api.dicebear.com/6.x/initials/svg?seed=${student.fullName}`}
           alt="avatar"
-          style={styles.avatar}
+          style={st.avatar}
         />
-        <h3 style={styles.value}>{student.fullName || "Name"}</h3>
-        <p style={{ color: "#6b7280", fontSize: 14 }}>Los Angeles USA</p>
-        <p style={{ color: "#6b7280", fontSize: 14 }}>GTM-7</p>
+        <h3 style={st.value}>{student.fullName || "Name"}</h3>
       </div>
 
-      <div style={styles.card}>
-        <h4 style={styles.sectionTitle}>Profile Details</h4>
-
-        <div style={styles.infoGroup}>
-          <label style={styles.label}>Full Name</label>
-          <div style={styles.value}>{student.fullName}</div>
+      {/* كرت التفاصيل */}
+      <div style={st.card}>
+        <h4 style={st.sectionTitle}>Profile Details</h4>
+        <div>
+          <label style={st.label}>Full Name</label>
+          <div style={st.value}>{student.fullName}</div>
         </div>
-
-        <div style={styles.infoGroup}>
-          <label style={styles.label}>Email</label>
-          <div style={styles.value}>{student.email}</div>
+        <div>
+          <label style={st.label}>Email</label>
+          <div style={st.value}>{student.email}</div>
         </div>
-
-        <div style={styles.infoGroup}>
-          <label style={styles.label}>Phone Number</label>
-          <div style={styles.value}>{student.phoneNumber || "-"}</div>
+        <div>
+          <label style={st.label}>Phone Number</label>
+          <div style={st.value}>{student.phoneNumber || "-"}</div>
         </div>
-
-        <div style={styles.infoGroup}>
-          <label style={styles.label}>Major</label>
-          <div style={styles.value}>{student.major || "-"}</div>
+        <div>
+          <label style={st.label}>Major</label>
+          <div style={st.value}>{student.major || "-"}</div>
         </div>
       </div>
     </section>
