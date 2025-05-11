@@ -77,3 +77,29 @@
   .assign-wrapper { padding: 16px; }
 }
 
+.open-btn {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 12px;
+  background: #a4d4ae;
+  color: #000;
+  text-decoration: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  transition: background 0.2s ease;
+}
+
+.open-btn:hover {
+  background: #89c69c;
+}
+.assign-score {
+  margin-top: 8px;
+  color: #333;
+  background: #f0f0f0;
+  padding: 6px 10px;
+  border-left: 4px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+}
+

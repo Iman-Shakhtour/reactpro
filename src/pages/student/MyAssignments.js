@@ -1,25 +1,19 @@
-/* =============================================================
-   MyAssignments.js — React component (Student view)
-   Auto‑recovers userId if missing
-   ============================================================= */
-
 import React, { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 import studentApi from "../../api/studentApi";
+import axiosInstance from "../../api/axiosInstance";
 import { toast } from "react-toastify";
 import "./MyAssignments.css";
 
 export default function MyAssignments() {
   const [assignments, setAssignments] = useState([]);
+  const [submissions, setSubmissions] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  /* -------------------------------------------------------------
-     Helper: get or discover studentId
-  ------------------------------------------------------------- */
   const resolveStudentId = async () => {
     let id = localStorage.getItem("userId");
     if (id) return id;
 
-    // ⚠️ لم يُحفظ الـ id ‑ جرّب جلب البروفايل ثم خزّنه
     try {
       const { data } = await studentApi.getProfile();
       const p = data.content ?? data;
@@ -43,20 +37,30 @@ export default function MyAssignments() {
       }
 
       try {
-        const { data } = await studentApi.getAssignments(studentId);
-        const clean = (item) => ({
-          id: item.id,
-          title: item.title,
-          instructions: item.instructions,
-          dueDate: item.dueDate,
-          type: item.type,
-          status: item.status,
-          courseTitle: item.courseTitle,
-        });
-        setAssignments(Array.isArray(data) ? data.map(clean) : []);
+        // 🔹 Get assignments
+        const { data: aData } = await studentApi.getAssignments(studentId);
+        const assignmentsList = Array.isArray(aData)
+          ? aData.map((item) => ({
+              id: item.id,
+              title: item.title,
+              instructions: item.instructions,
+              type: item.type,
+              status: item.status,
+              courseTitle: item.courseTitle,
+            }))
+          : [];
+
+        // 🔹 Get submissions for this student
+        const { data: sData } = await axiosInstance.get(`/api/submissions/student/${studentId}`);
+        const submissionsList = Array.isArray(sData)
+          ? sData.map((s) => s.content ?? s)
+          : [];
+
+        setAssignments(assignmentsList);
+        setSubmissions(submissionsList);
       } catch (err) {
         console.error(err);
-        toast.error("❌ Failed to load assignments");
+        toast.error("❌ Failed to load assignments or submissions");
       } finally {
         setLoading(false);
       }
@@ -65,6 +69,11 @@ export default function MyAssignments() {
 
   const fmtDate = (d) =>
     d ? new Intl.DateTimeFormat("en-GB", { dateStyle: "medium" }).format(new Date(d)) : "—";
+
+  const findScoreForAssignment = (assignmentId) => {
+    const submission = submissions.find((s) => s.assessmentId === assignmentId);
+    return submission?.score;
+  };
 
   return (
     <section className="assign-wrapper">
@@ -84,8 +93,31 @@ export default function MyAssignments() {
               </header>
               <p className="assign-info"><strong>Course:</strong> {a.courseTitle || "N/A"}</p>
               <p className="assign-info"><strong>Type:</strong> {a.type}</p>
-              <p className="assign-info"><strong>Due:</strong> {fmtDate(a.dueDate)}</p>
               {a.instructions && <p className="assign-info"><strong>Instructions:</strong> {a.instructions}</p>}
+
+              <Link to={`/dashboard/student/assignments/${a.id}`} className="open-btn">
+                OPEN
+              </Link>
+
+              {/* 🔹 Show score if submitted */}
+             {(() => {
+  const submission = submissions.find((s) => s.assessmentId === a.id);
+
+  if (!submission) {
+    return <p className="assign-score">📌 Not submitted yet</p>;
+  }
+
+  if (submission.score == null) {
+    return <p className="assign-score">⏳ Submitted (Pending grading)</p>;
+  }
+
+  return (
+    <p className="assign-score">
+      🎯 Your Score: <strong>{submission.score.toFixed(2)}%</strong>
+    </p>
+  );
+})()}
+
             </li>
           ))}
         </ul>
