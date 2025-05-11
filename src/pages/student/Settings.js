@@ -36,7 +36,8 @@ export default function Settings() {
         // تحديث Sidebar مبدئيًا
         localStorage.setItem("profileImage", d.photoUrl || "");
         localStorage.setItem("username", d.fullName || "");
-        window.dispatchEvent(new Event("storage")); // ✅ إشعار يدوي لتحديث Sidebar
+        window.dispatchEvent(new Event("storage")); // ✅ إشعار أولي
+        window.dispatchEvent(new Event("profileUpdated")); // ✅ مخصص
       })
       .catch(() => toast.error("❌ Failed to load profile."));
   }, []);
@@ -51,9 +52,10 @@ export default function Settings() {
       const { data } = await studentApi.uploadPhoto(fd);
       const url = data.imageUrl;
 
-      // تحديث الـ Sidebar مباشرة
+      // تحديث Sidebar مباشرة
       localStorage.setItem("profileImage", url);
-      window.dispatchEvent(new Event("storage")); // ✅ تحديث فوري للـ Sidebar
+      window.dispatchEvent(new Event("storage"));
+      window.dispatchEvent(new Event("profileUpdated"));
 
       setStudent((prev) => ({ ...prev, photoUrl: url }));
       toast.success("✅ Photo updated!");
@@ -74,9 +76,13 @@ export default function Settings() {
         major: student.major,
       });
 
-      // تحديث الاسم في Sidebar
+      // ✅ تحديث localStorage بالبيانات الجديدة
       localStorage.setItem("username", fullName);
-      window.dispatchEvent(new Event("storage")); // ✅ تحديث فوري للـ Sidebar
+      localStorage.setItem("profileImage", student.photoUrl || "");
+
+      // ✅ إشعار لتحديث الـ Sidebar
+      window.dispatchEvent(new Event("storage"));
+      window.dispatchEvent(new Event("profileUpdated"));
 
       toast.success("✅ Profile updated!");
     } catch {
@@ -129,7 +135,7 @@ export default function Settings() {
           }}
         >
           <div className="settings-grid">
-            {[
+            {[ 
               { name: "firstName", label: "First name*", value: student.firstName },
               { name: "lastName", label: "Last name*", value: student.lastName },
               { name: "email", label: "Email*", value: student.email, type: "email" },

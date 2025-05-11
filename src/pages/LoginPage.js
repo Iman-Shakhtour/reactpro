@@ -25,10 +25,15 @@ const LoginPage = () => {
 
       if (role === "ROLE_STUDENT") {
         try {
-          const { data } = await studentApi.get("/students/me");
+          const { data } = await studentApi.getProfile(); // ✅ هنا التعديل
           const p = data.content ?? data;
+
+          // ✅ تحديث الصورة والاسم مباشرة
           localStorage.setItem("username", p.fullName || username);
           localStorage.setItem("profileImage", p.photoUrl || "");
+
+          // ✅ إطلاق حدث لتحديث الـ Sidebar إذا كان مفتوح
+          window.dispatchEvent(new Event("profileUpdated"));
         } catch {
           localStorage.setItem("username", username);
           localStorage.setItem("profileImage", "");
