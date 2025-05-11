@@ -2,26 +2,26 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// 🏠 Public Pages
+// Public pages
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
-// 🛡️ Layout & Route Protection
+// Shared layout and protection
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-// 👨‍🎓 Student Pages
+// Student pages
 import StudentDashboard from "./pages/student/StudentDashboard";
 import MyCourses from "./pages/student/MyCourses";
 import MyProfile from "./pages/student/MyProfile";
 import Scholarships from "./pages/student/Scholarships";
 import MyAssignments from "./pages/student/MyAssignments";
-import Settings from "./pages/student/Settings"; // 👈 أضف هذا
+import Settings from "./pages/student/Settings";
 import SolveAssignment from "./pages/student/SolveAssignment";
 
-// 👩‍💼 Admin Pages
+// Admin pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ManageUsersPage from "./pages/admin/ManageUsersPage";
 import ManageCoursesPage from "./pages/admin/ManageCoursesPage";
@@ -32,8 +32,16 @@ import InstructorsPage from "./pages/admin/InstructorsPage";
 import DonorsPage from "./pages/admin/DonorsPage";
 import StatisticsPage from "./pages/StatisticsPage";
 
-// 🧑‍🏫 Instructor + Donor
-import InstructorDashboard from "./pages/InstructorDashboard";
+// Instructor pages
+import InstructorDashboard from "./pages/instructor/InstructorDashboard";
+import ContentPage from "./pages/instructor/ContentPage";
+import ManageAssignments from "./pages/instructor/ManageAssignments";
+import SubmittedAssignments from "./pages/instructor/SubmittedAssignments";
+import ViewEnrolledStudents from "./pages/instructor/ViewEnrolledStudents";
+import EditProfile from "./pages/instructor/EditProfile";
+import CourseDetails from "./pages/instructor/CourseDetails";
+
+// Donor page
 import DonorDashboard from "./pages/DonorDashboard";
 
 function App() {
@@ -41,15 +49,13 @@ function App() {
     <BrowserRouter>
       <ToastContainer />
       <Routes>
-
-        {/* 🏠 Public Routes */}
+        {/* Public Pages */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
 
-        {/* 🔐 Protected Routes with Layout */}
+        {/* 🔐 Protected Layout */}
         <Route element={<Layout />}>
-
           {/* 👩‍💼 Admin */}
           <Route
             path="/dashboard/admin"
@@ -82,9 +88,8 @@ function App() {
             <Route path="profile" element={<MyProfile />} />
             <Route path="scholarships" element={<Scholarships />} />
             <Route path="assignments" element={<MyAssignments />} />
-            <Route path="settings" element={<Settings />} /> 
-<Route path="assignments/:id" element={<SolveAssignment />} />
-
+            <Route path="settings" element={<Settings />} />
+            <Route path="assignments/:id" element={<SolveAssignment />} />
           </Route>
 
           {/* 🧑‍🏫 Instructor */}
@@ -95,9 +100,16 @@ function App() {
                 <InstructorDashboard />
               </ProtectedRoute>
             }
-          />
+          >
+            <Route path="content" element={<ContentPage />} />
+            <Route path="assignments" element={<ManageAssignments />} />
+            <Route path="submissions" element={<SubmittedAssignments />} />
+            <Route path="enrolled-students" element={<ViewEnrolledStudents />} />
+            <Route path="edit-profile" element={<EditProfile />} />
+            <Route path="course-details/:courseId" element={<CourseDetails />} />
+          </Route>
 
-          {/* 💰 Donor */}
+          {/* 🤝 Donor */}
           <Route
             path="/dashboard/donor"
             element={

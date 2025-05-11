@@ -19,27 +19,30 @@ const LoginPage = () => {
     try {
       const response = await axiosInstance.post("/auth/login", { username, password });
       const { token } = response.data;
-      localStorage.setItem("token", token);
+
       const decoded = jwtDecode(token);
       const role = decoded.role;
+      const userId = decoded.id;
+
+      localStorage.setItem("token", token);
+      localStorage.setItem("username", username);
+      localStorage.setItem("role", role);
+      localStorage.setItem("userId", userId);
 
       if (role === "ROLE_STUDENT") {
         try {
-          const { data } = await studentApi.getProfile(); // ✅ هنا التعديل
+          const { data } = await studentApi.getProfile();
           const p = data.content ?? data;
 
-          // ✅ تحديث الصورة والاسم مباشرة
           localStorage.setItem("username", p.fullName || username);
           localStorage.setItem("profileImage", p.photoUrl || "");
 
-          // ✅ إطلاق حدث لتحديث الـ Sidebar إذا كان مفتوح
+          // 🔁 Notify sidebar to refresh info
           window.dispatchEvent(new Event("profileUpdated"));
         } catch {
-          localStorage.setItem("username", username);
           localStorage.setItem("profileImage", "");
         }
       } else {
-        localStorage.setItem("username", username);
         localStorage.setItem("profileImage", "");
       }
 
