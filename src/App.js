@@ -78,18 +78,12 @@ function App() {
               </ProtectedRoute>
             }
           >
-           <Route path="/dashboard/student" element={
-  <ProtectedRoute role="ROLE_STUDENT">
-    <StudentDashboard />
-  </ProtectedRoute>
-}>
-  <Route path="courses" element={<MyCourses />} />
-  <Route path="profile" element={<MyProfile />} />
-  <Route path="scholarships" element={<Scholarships />} />
-  <Route path="assignments" element={<MyAssignments />} />
-  <Route path="assignments/:id" element={<SolveAssignment />} />
-  <Route path="settings" element={<Settings />} />
-</Route>
+            <Route path="courses" element={<MyCourses />} />
+            <Route path="profile" element={<MyProfile />} />
+            <Route path="scholarships" element={<Scholarships />} />
+            <Route path="assignments" element={<MyAssignments />} />
+            <Route path="settings" element={<Settings />} /> 
+<Route path="assignments/:id" element={<SolveAssignment />} />
 
           </Route>
 

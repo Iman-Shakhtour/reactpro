@@ -1,0 +1,109 @@
+@import url("https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap");
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: "Quicksand", sans-serif;
+}
+
+.page-signup {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  background: #A9BA9D; /* Laurel Green */
+  overflow: hidden;
+}
+
+.ring {
+  position: relative;
+  width: 480px;
+  height: 480px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.ring i {
+  position: absolute;
+  inset: 0;
+  border: 2px solid #fff;
+  transition: 0.5s;
+}
+.ring i:nth-child(1) {
+  border-radius: 38% 62% 63% 37% / 41% 44% 56% 59%;
+  animation: animate 6s linear infinite;
+}
+.ring i:nth-child(2) {
+  border-radius: 41% 44% 56% 59% / 38% 62% 63% 37%;
+  animation: animate 4s linear infinite;
+}
+.ring i:nth-child(3) {
+  border-radius: 50%;
+  animation: animate2 10s linear infinite;
+}
+
+.ring:hover i {
+  border: 6px solid var(--clr);
+  filter: drop-shadow(0 0 20px var(--clr));
+}
+
+@keyframes animate {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+@keyframes animate2 {
+  0% { transform: rotate(360deg); }
+  100% { transform: rotate(0deg); }
+}
+
+.signup-box {
+  position: absolute;
+  width: 320px;
+  background: #CCE3C0; /* Tea Green */
+  border-radius: 15px;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.2);
+}
+
+.signup-box h2 {
+  text-align: center;
+  color: #3B3B3B; /* Text */
+}
+
+.signup-box input,
+.signup-box select {
+  padding: 12px;
+  font-size: 1em;
+  border-radius: 10px;
+  border: 1px solid #ccc;
+  background: #fff;
+  outline: none;
+  color: #333;
+}
+
+.signup-box button {
+  padding: 12px;
+  border: none;
+  border-radius: 10px;
+  background: linear-gradient(45deg, #E9DCAA, #fff); /* Cookies & Cream */
+  color: #3B3B3B;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.signup-box p {
+  text-align: center;
+  color: #3B3B3B;
+  font-size: 0.9em;
+}
+
+.signup-box a {
+  text-decoration: none;
+  color: #3B3B3B;
+  font-weight: bold;
+}
