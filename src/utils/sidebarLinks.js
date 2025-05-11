@@ -1,16 +1,59 @@
-// src/utils/sidebarLinks.js
+import {
+  HiOutlineUserGroup,
+  HiOutlineBookOpen,
+  HiOutlineAcademicCap,
+  HiOutlineChartBar,
+} from "react-icons/hi2";
 
+/* ---------- Admin links ---------- */
+export const adminLinks = [
+  {
+    to: "/dashboard/manage-users",
+    label: "Manage Users",
+    icon: <HiOutlineUserGroup size={18} />,
+  },
+  {
+    to: "/dashboard/manage-courses",
+    label: "Manage Courses",
+    icon: <HiOutlineBookOpen size={18} />,
+  },
+  {
+    to: "/dashboard/manage-scholarships",
+    label: "Manage Scholarships",
+    icon: <HiOutlineAcademicCap size={18} />,
+  },
+  {
+    to: "/dashboard/stats",
+    label: "System Stats",
+    icon: <HiOutlineChartBar size={18} />,
+  },
+];
+
+/* ---------- Student links ---------- */
 export const studentLinks = [
-    { to: "/dashboard/student/courses", label: "My Courses", icon: "📚" },
-    { to: "/dashboard/student/progress", label: "My Progress", icon: "📈" },
-    { to: "/dashboard/student/profile", label: "My Profile", icon: "🙍‍♂️" },
-    { to: "/dashboard/student/scholarships", label: "My Scholarships", icon: "🎓" },
-  ];
-  
-  export const adminLinks = [
-    { to: "/dashboard/manage-users", label: "Manage Users", icon: "👥" },
-    { to: "/dashboard/manage-courses", label: "Manage Courses", icon: "📚" },
-    { to: "/dashboard/manage-scholarships", label: "Manage Scholarships", icon: "🎓" },
-    { to: "/dashboard/stats", label: "System Statistics", icon: "📊" },
-  ];
-  
+  {
+    to: "/dashboard/student/courses",
+    label: "My Courses",
+    icon: <HiOutlineBookOpen size={18} />,
+  },
+  {
+    to: "/dashboard/student/assignments",
+    label: "My Assignments",
+    icon: <HiOutlineBookOpen size={18} />,
+  },
+  {
+    to: "/dashboard/student/profile",
+    label: "My Profile",
+    icon: <HiOutlineUserGroup size={18} />,
+  },
+  {
+    to: "/dashboard/student/scholarships",
+    label: "Scholarships",
+    icon: <HiOutlineAcademicCap size={18} />,
+  },
+  {
+    to: "/dashboard/student/settings",
+    label: "Settings",
+    icon: <HiOutlineChartBar size={18} />,
+  },
+];

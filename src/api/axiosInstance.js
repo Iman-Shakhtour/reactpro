@@ -5,9 +5,9 @@ const axiosInstance = axios.create({
   headers: {
     "Content-Type": "application/json",
   },
-  withCredentials: false, 
 });
-// 🛠️ Attach the token automatically to every request
+
+// ✅ إرسال التوكن تلقائيًا في كل طلب
 axiosInstance.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
   if (token) {
