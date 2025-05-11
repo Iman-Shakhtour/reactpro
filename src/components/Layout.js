@@ -11,7 +11,7 @@ const Layout = () => {
   const username = localStorage.getItem("username") || "User";
   const role = token ? jwtDecode(token).role : null;
 
-  const noHeaderRoutes = ["/", "/signup"];
+  const noHeaderRoutes = ["/", "/signup", "/login"];
 
   const onLogout = () => {
     localStorage.clear();
@@ -50,7 +50,6 @@ const Layout = () => {
 };
 
 /* ---------- STYLES ---------- */
-
 const iconBox = {
   position: "fixed",
   top: 16,

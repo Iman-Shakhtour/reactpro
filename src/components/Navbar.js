@@ -2,7 +2,9 @@ import { HiBell, HiChatBubbleLeftRight } from "react-icons/hi2";
 
 const Navbar = () => {
   const token = localStorage.getItem("token");
-  if (!token) return null; // إخفاء الهيدر في الصفحات العامة
+
+  // إخفاء الهيدر في الصفحات العامة
+  if (!token) return null;
 
   return (
     <header style={header}>

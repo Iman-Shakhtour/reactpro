@@ -15,21 +15,17 @@ const FONT  = { fontFamily: "'Inter',sans-serif", fontWeight: 300 };
 
 const Sidebar = ({ links, onLogout = () => {} }) => {
   const [username, setUsername] = useState("User");
-  const [avatar,   setAvatar]   = useState(null);
+  const [avatar, setAvatar] = useState(null);
 
-  /* ✅ تحميل البيانات عند البداية، وتحديثها عند حدث مخصص */
   useEffect(() => {
     const updateSidebar = () => {
       setUsername(localStorage.getItem("username") || "User");
       setAvatar(localStorage.getItem("profileImage") || null);
     };
 
-    updateSidebar(); // تحميل أولي
+    updateSidebar();
 
-    // ✅ استماع لحدث profileUpdated (يُطلقه Settings.js)
     window.addEventListener("profileUpdated", updateSidebar);
-
-    // أيضاً لو فتح في تبويبة ثانية
     window.addEventListener("storage", updateSidebar);
 
     return () => {
