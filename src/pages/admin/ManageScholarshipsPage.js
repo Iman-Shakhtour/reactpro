@@ -1,38 +1,15 @@
-// src/pages/admin/ManageScholarshipsPage.js
-import { useEffect, useState } from "react";
-import adminApi from "../../api/adminApi";
+import { useNavigate } from "react-router-dom";
 
 const ManageScholarshipsPage = () => {
-  const [scholarships, setList] = useState([]);
-  const [name, setName]         = useState("");
+  const navigate = useNavigate();
 
-  const load = () =>
-    adminApi.getScholarships?.().then(res => setList(res.data));
-  useEffect(() => { load?.(); }, []);
-
-  const add = async () => {
-    if (!name.trim()) return;
-    await adminApi.createScholarship({ name });
-    setName("");
-    load?.();
-  };
+  
 
   return (
-    <div>
+    <div style={{ padding: "20px" }}>
       <h2>🎓 Manage Scholarships</h2>
+      <p>Here you can view, create, update, and delete scholarships.</p>
 
-      <div style={{ margin: "10px 0" }}>
-        <input
-          value={name}
-          onChange={e => setName(e.target.value)}
-          placeholder="Scholarship name"
-        />
-        <button onClick={add}>➕ Add</button>
-      </div>
-
-      <ul>
-        {scholarships?.map(s => <li key={s.id}>{s.name}</li>)}
-      </ul>
     </div>
   );
 };
