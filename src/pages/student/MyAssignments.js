@@ -1,119 +1,95 @@
+/* =============================================================
+   MyAssignments.js — React component (Student view)
+   Auto‑recovers userId if missing
+   ============================================================= */
+
 import React, { useEffect, useState } from "react";
 import studentApi from "../../api/studentApi";
-import axiosInstance from "../../api/axiosInstance";
 import { toast } from "react-toastify";
+import "./MyAssignments.css";
 
-const MyAssignments = () => {
-  const [list, setList] = useState([]);
-  const [courses, setCourses] = useState({});
+export default function MyAssignments() {
+  const [assignments, setAssignments] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
-    const load = async () => {
-      try {
-        const stu = await studentApi.getProfile();
-        const id = stu.data.content?.id ?? stu.data.id;
-        const asRes = await studentApi.getAssignments(id);
-        const arr = asRes.data.map((m) => m.content || m);
-        setList(arr);
+  /* -------------------------------------------------------------
+     Helper: get or discover studentId
+  ------------------------------------------------------------- */
+  const resolveStudentId = async () => {
+    let id = localStorage.getItem("userId");
+    if (id) return id;
 
-        // fetch course titles
-        const ids = [...new Set(arr.map((a) => a.courseId).filter(Boolean))];
-        const map = {};
-        await Promise.all(
-          ids.map(async (cid) => {
-            try {
-              const c = await axiosInstance.get(`/api/courses/${cid}`);
-              map[cid] = c.data.content?.title || c.data.title || `Course #${cid}`;
-            } catch {
-              map[cid] = `Course #${cid}`;
-            }
-          })
-        );
-        setCourses(map);
-      } catch {
-        toast.error("❌ Failed to load assignments.");
+    // ⚠️ لم يُحفظ الـ id ‑ جرّب جلب البروفايل ثم خزّنه
+    try {
+      const { data } = await studentApi.getProfile();
+      const p = data.content ?? data;
+      if (p?.id) {
+        localStorage.setItem("userId", p.id);
+        return p.id;
+      }
+    } catch (err) {
+      console.error("Failed to auto‑resolve userId", err);
+    }
+    return null;
+  };
+
+  useEffect(() => {
+    (async () => {
+      const studentId = await resolveStudentId();
+      if (!studentId) {
+        toast.error("⚠️ Missing user ID – please re‑login");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const { data } = await studentApi.getAssignments(studentId);
+        const clean = (item) => ({
+          id: item.id,
+          title: item.title,
+          instructions: item.instructions,
+          dueDate: item.dueDate,
+          type: item.type,
+          status: item.status,
+          courseTitle: item.courseTitle,
+        });
+        setAssignments(Array.isArray(data) ? data.map(clean) : []);
+      } catch (err) {
+        console.error(err);
+        toast.error("❌ Failed to load assignments");
       } finally {
         setLoading(false);
       }
-    };
-    load();
+    })();
   }, []);
 
-  /* ---------- styles ---------- */
-  const st = {
-    page: { padding: 24 },
-    grid: {
-      display: "grid",
-      gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))",
-      gap: 24,
-    },
-    card: {
-      background: "#fff",
-      borderRadius: 16,
-      boxShadow: "0 4px 12px rgba(0,0,0,0.07)",
-      overflow: "hidden",
-      display: "flex",
-      flexDirection: "column",
-      transition: "transform 0.2s",
-    },
-    header: {
-      background: "linear-gradient(135deg,#06b6d4 0%,#3b82f6 100%)",
-      color: "#fff",
-      padding: "20px 16px",
-      fontSize: 18,
-      fontWeight: 600,
-      textAlign: "center",
-    },
-    body: { padding: 16 },
-    row: { display: "flex", justifyContent: "space-between", marginBottom: 12 },
-    badge: (s) => ({
-      padding: "4px 10px",
-      borderRadius: 12,
-      fontSize: 12,
-      color: "#fff",
-      background: s === "COMPLETED" ? "#22c55e" : s === "PENDING" ? "#f97316" : "#facc15",
-    }),
-  };
-
-  const Card = ({ a }) => (
-    <div
-      style={st.card}
-      onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-4px)")}
-      onMouseLeave={(e) => (e.currentTarget.style.transform = "none")}
-    >
-      <div style={st.header}>{courses[a.courseId] || `Course #${a.courseId}`}</div>
-      <div style={st.body}>
-        <div style={st.row}>
-          <span>📝 Type</span>
-          <span>{a.type}</span>
-        </div>
-        <div style={st.row}>
-          <span>📌 Status</span>
-          <span style={st.badge(a.status)}>{a.status}</span>
-        </div>
-        {a.correctAnswers && (
-          <div style={st.row}>
-            <span>✅ Correct Answers</span>
-            <span>{a.correctAnswers}</span>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  const fmtDate = (d) =>
+    d ? new Intl.DateTimeFormat("en-GB", { dateStyle: "medium" }).format(new Date(d)) : "—";
 
   return (
-    <div style={st.page}>
-      <h2 style={{ fontSize: 24, fontWeight: 700, marginBottom: 24 }}>🗒️ My Assignments</h2>
-      {loading ? (
-        <p>Loading...</p>
-      ) : list.length === 0 ? (
-        <p>No assignments found.</p>
-      ) : (
-        <div style={st.grid}>{list.map((a) => <Card key={a.id} a={a} />)}</div>
-      )}
-    </div>
-  );
-};
+    <section className="assign-wrapper">
+      <h2 className="assign-heading">📚 My Assignments</h2>
 
-export default MyAssignments;
+      {loading ? (
+        <p className="assign-msg">Loading…</p>
+      ) : assignments.length === 0 ? (
+        <p className="assign-msg">No assignments found.</p>
+      ) : (
+        <ul className="assign-list">
+          {assignments.map((a) => (
+            <li key={a.id} className="assign-card">
+              <header className="assign-card-header">
+                <h3 className="assign-title">{a.title}</h3>
+                <span className={`status-badge ${a.status?.toLowerCase()}`}>{a.status}</span>
+              </header>
+              <p className="assign-info"><strong>Course:</strong> {a.courseTitle || "N/A"}</p>
+              <p className="assign-info"><strong>Type:</strong> {a.type}</p>
+              <p className="assign-info"><strong>Due:</strong> {fmtDate(a.dueDate)}</p>
+              {a.instructions && <p className="assign-info"><strong>Instructions:</strong> {a.instructions}</p>}
+            </li>
+          ))}
+        </ul>
+      )}
+    </section>
+  );
+}

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import studentApi from "../../api/studentApi";
 import { toast } from "react-toastify";
+import "./MyCourses.css";
 
 const MyCourses = () => {
   const [enrollments, setEnrollments] = useState([]);
@@ -34,15 +35,15 @@ const MyCourses = () => {
       {loading ? (
         <p>Loading...</p>
       ) : (
-        <table style={tableStyle}>
+        <table className="table">
           <thead>
             <tr style={{ background: "#f4f7fb" }}>
-              <th style={thStyle}>Title</th>
-              <th style={thStyle}>Description</th>
-              <th style={thStyle}>Type</th>
-              <th style={thStyle}>Price</th>
-              <th style={thStyle}>Progress</th>
-              <th style={thStyle}>Status</th>
+              <th>Title</th>
+              <th>Description</th>
+              <th>Type</th>
+              <th>Price</th>
+              <th>Progress</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
@@ -55,17 +56,17 @@ const MyCourses = () => {
             ) : (
               enrollments.map((enroll) => (
                 <tr key={enroll.id}>
-                  <td style={tdStyle}>{enroll.courseTitle || "-"}</td>
-                  <td style={tdStyle}>{enroll.courseDescription || "-"}</td>
-                  <td style={tdStyle}>{enroll.courseIsFree ? "Free" : "Paid"}</td>
-                  <td style={tdStyle}>
+                  <td>{enroll.courseTitle || "-"}</td>
+                  <td>{enroll.courseDescription || "-"}</td>
+                  <td>{enroll.courseIsFree ? "Free" : "Paid"}</td>
+                  <td>
                     {enroll.courseIsFree ? "—" : `$${enroll.coursePrice ?? "N/A"}`}
                   </td>
-                  <td style={tdStyle}>
-                    <div style={progressBarContainer}>
+                  <td>
+                    <div className="progress-container">
                       <div
+                        className="progress-bar"
                         style={{
-                          ...progressBarFill,
                           width: `${enroll.progress?.toFixed?.(0) ?? 0}%`,
                           backgroundColor: enroll.completed ? "#4CAF50" : "#2196F3",
                         }}
@@ -75,9 +76,7 @@ const MyCourses = () => {
                       {enroll.progress?.toFixed?.(0) ?? 0}%
                     </span>
                   </td>
-                  <td style={tdStyle}>
-                    {enroll.completed ? "✅ Completed" : "⏳ In Progress"}
-                  </td>
+                  <td>{enroll.completed ? "✅ Completed" : "⏳ In Progress"}</td>
                 </tr>
               ))
             )}
@@ -86,43 +85,6 @@ const MyCourses = () => {
       )}
     </div>
   );
-};
-
-// ✅ CSS Styles
-const tableStyle = {
-  width: "100%",
-  borderCollapse: "collapse",
-  background: "white",
-  borderRadius: "12px",
-  boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
-  overflow: "hidden",
-};
-
-const thStyle = {
-  padding: "12px",
-  fontWeight: "bold",
-  textAlign: "left",
-  borderBottom: "1px solid #eee",
-};
-
-const tdStyle = {
-  padding: "12px",
-  borderBottom: "1px solid #f0f0f0",
-  verticalAlign: "middle",
-};
-
-const progressBarContainer = {
-  height: "10px",
-  width: "100%",
-  backgroundColor: "#ddd",
-  borderRadius: "6px",
-  marginBottom: "4px",
-};
-
-const progressBarFill = {
-  height: "100%",
-  borderRadius: "6px",
-  transition: "width 0.3s ease-in-out",
 };
 
 export default MyCourses;

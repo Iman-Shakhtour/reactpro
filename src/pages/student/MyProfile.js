@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import studentApi from "../../api/studentApi";
 import { toast } from "react-toastify";
+import "./MyProfile.css";
 
 const MyProfile = () => {
   const [student, setStudent] = useState({
@@ -8,7 +9,11 @@ const MyProfile = () => {
     email: "",
     phoneNumber: "",
     major: "",
+    city: "",
+    photoUrl: "",
   });
+
+  const [showImage, setShowImage] = useState(false); // ✅ حالة عرض الصورة
 
   useEffect(() => {
     studentApi
@@ -20,67 +25,58 @@ const MyProfile = () => {
           email: data.email || "",
           phoneNumber: data.phoneNumber || "",
           major: data.major || "",
+          city: data.city || "",
+          photoUrl: data.photoUrl || "",
         });
       })
       .catch(() => toast.error("❌ Failed to load profile."));
   }, []);
 
-  /* ---------- Styles ---------- */
-  const st = {
-    wrapper: { display: "flex", gap: 24, padding: 24, flexWrap: "wrap" },
-    card: {
-      flex: 1,
-      background: "#fff",
-      borderRadius: 12,
-      boxShadow: "0 1px 4px rgba(0,0,0,0.1)",
-      padding: 24,
-      minWidth: 300,
-    },
-    sectionTitle: { fontSize: 20, fontWeight: 600, marginBottom: 16 },
-    label: { display: "block", fontSize: 13, color: "#6b7280", marginBottom: 4 },
-    value: { fontSize: 15, fontWeight: 500 },
-    center: { textAlign: "center" },
-    avatar: {
-      width: 96,
-      height: 96,
-      borderRadius: "50%",
-      objectFit: "cover",
-      marginBottom: 16,
-    },
-  };
-
   return (
-    <section style={st.wrapper}>
-      {/* كرت الصورة */}
-      <div style={{ ...st.card, ...st.center }}>
+    <section className="profile-wrapper">
+      {/* صورة الطالب */}
+      <div className="profile-card profile-center">
         <img
-          src={`https://api.dicebear.com/6.x/initials/svg?seed=${student.fullName}`}
+          src={
+            student.photoUrl ||
+            `https://api.dicebear.com/6.x/initials/svg?seed=${student.fullName}`
+          }
           alt="avatar"
-          style={st.avatar}
+          className="profile-avatar"
+          onClick={() => setShowImage(true)} // ✅ نفتح المودال
+          style={{ cursor: "pointer" }}
         />
-        <h3 style={st.value}>{student.fullName || "Name"}</h3>
+        <h3 className="profile-value">{student.fullName || "Name"}</h3>
       </div>
 
-      {/* كرت التفاصيل */}
-      <div style={st.card}>
-        <h4 style={st.sectionTitle}>Profile Details</h4>
-        <div>
-          <label style={st.label}>Full Name</label>
-          <div style={st.value}>{student.fullName}</div>
-        </div>
-        <div>
-          <label style={st.label}>Email</label>
-          <div style={st.value}>{student.email}</div>
-        </div>
-        <div>
-          <label style={st.label}>Phone Number</label>
-          <div style={st.value}>{student.phoneNumber || "-"}</div>
-        </div>
-        <div>
-          <label style={st.label}>Major</label>
-          <div style={st.value}>{student.major || "-"}</div>
+      {/* تفاصيل الطالب */}
+      <div className="profile-card">
+        <h4 className="profile-title">Profile Details</h4>
+        <div className="profile-grid">
+          {[
+            { label: "Email", value: student.email },
+            { label: "Phone Number", value: student.phoneNumber },
+            { label: "Major", value: student.major },
+            { label: "City", value: student.city },
+          ].map((item) => (
+            <div key={item.label}>
+              <label className="profile-label">{item.label}</label>
+              <div className="profile-value">{item.value || "-"}</div>
+            </div>
+          ))}
         </div>
       </div>
+
+      {/* ✅ نافذة الصورة المكبرة */}
+      {showImage && (
+        <div className="profile-modal" onClick={() => setShowImage(false)}>
+          <img
+            src={student.photoUrl}
+            alt="avatar enlarged"
+            className="profile-modal-img"
+          />
+        </div>
+      )}
     </section>
   );
 };

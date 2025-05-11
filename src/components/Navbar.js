@@ -2,11 +2,11 @@ import { HiBell, HiChatBubbleLeftRight } from "react-icons/hi2";
 
 const Navbar = () => {
   const token = localStorage.getItem("token");
-  if (!token) return null;        // إخفاء الهيدر في صفحات غير محمية
+  if (!token) return null; // إخفاء الهيدر في الصفحات العامة
 
   return (
     <header style={header}>
-      <div />                     {/* يسار الهيدر فارغ */}
+      <span style={logo}>Hayat LMS</span>
       <div style={icons}>
         <HiBell size={22} style={icon} />
         <HiChatBubbleLeftRight size={22} style={icon} />
@@ -26,11 +26,27 @@ const header = {
   alignItems: "center",
   justifyContent: "space-between",
   padding: "0 24px",
-  background: "transparent",
+  background: "#CCE3C0", // Tea Green
+  color: "#3B3B3B",
+  boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
   zIndex: 999,
 };
 
-const icons = { display: "flex", gap: 18 };
-const icon  = { cursor: "pointer" };
+const logo = {
+  fontSize: 20,
+  fontWeight: 600,
+  color: "#5C4634", // Cookies & Cream text
+  fontFamily: "'Quicksand', sans-serif",
+};
+
+const icons = {
+  display: "flex",
+  gap: 18,
+};
+
+const icon = {
+  cursor: "pointer",
+  color: "#5C4634", // متناسق مع التصميم
+};
 
 export default Navbar;

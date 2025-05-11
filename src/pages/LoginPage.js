@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axiosInstance from "../api/axiosInstance";
+import studentApi from "../api/studentApi"; // 🔹 تأكد من أنك أنشأت هذا الملف للتعامل مع /api/students
 import { useNavigate, Link } from "react-router-dom";
 import { toast } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
@@ -8,7 +9,7 @@ const LoginPage = () => {
   const navigate = useNavigate();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [loading, setLoading] = useState(false); // ✨ حالة التحميل
+  const [loading, setLoading] = useState(false);
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -22,10 +23,26 @@ const LoginPage = () => {
 
       const { token } = response.data;
       localStorage.setItem("token", token);
-      localStorage.setItem("username", username);
 
       const decoded = jwtDecode(token);
       const role = decoded.role;
+
+      // 🔹 جلب بيانات الطالب في حال كان الطالب هو المستخدم
+      if (role === "ROLE_STUDENT") {
+        try {
+          const { data } = await studentApi.get("/students/me");
+          const p = data.content ?? data;
+          localStorage.setItem("username", p.fullName || username);
+          localStorage.setItem("profileImage", p.photoUrl || "");
+        } catch (err) {
+          console.error("Failed to fetch student profile:", err);
+          localStorage.setItem("username", username);
+          localStorage.setItem("profileImage", "");
+        }
+      } else {
+        localStorage.setItem("username", username);
+        localStorage.setItem("profileImage", "");
+      }
 
       toast.success("✅ Login successful!");
 

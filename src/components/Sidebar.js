@@ -1,64 +1,82 @@
+import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import {
-  HiUserGroup,
-  HiBookOpen,
-  HiAcademicCap,
-  HiChartBar,
-  HiArrowRightOnRectangle,
-} from "react-icons/hi2";
+import { HiArrowRightOnRectangle } from "react-icons/hi2";
 
-/* ---------- CONFIG ---------- */
-const BLUE  = "#001943";
-const SKY   = "#d6ecff";
-const SKY_H = "#bfe1ff";
+/* ---------- COLORS ---------- */
+const COLOR_SIDEBAR_BG = "#A9BA9D",
+      COLOR_CARD_BG    = "#CCE3C0",
+      COLOR_HIGHLIGHT  = "#E9DCAA",
+      COLOR_TEXT       = "#3B3B3B",
+      COLOR_LOGOUT_BG  = "#E9DCAA",
+      COLOR_LOGOUT_TX  = "#5C4634";
+
 const BTN_H = 48;
-const FONT  = { fontFamily: "'Inter', sans-serif", fontWeight: 300 };
+const FONT  = { fontFamily: "'Inter',sans-serif", fontWeight: 300 };
 
-/* ---------- COMPONENT ---------- */
-const Sidebar = ({ links, title, username = "User", onLogout = () => {} }) => (
-  <aside style={st.wrapper}>
-    {/* الشعار */}
-    <div style={st.logo}>
-      <span style={st.logoText}>Hayat&nbsp;LMS</span>
-    </div>
+const Sidebar = ({ links, onLogout = () => {} }) => {
+  const [username, setUsername] = useState("User");
+  const [avatar,   setAvatar]   = useState(null);
 
-    {/* بطاقة المستخدم */}
-    <div style={st.card}>
-      <img
-        src={
-          localStorage.getItem("profileImage") ||
-          `https://api.dicebear.com/6.x/bottts/svg?seed=${username}`
-        }
-        alt="avatar"
-        style={st.avatar}
-      />
-      <span style={st.hello}>Hi,&nbsp;{username}</span>
-    </div>
+  /* ✅ تحميل البيانات عند البداية، وتحديثها عند حدث مخصص */
+  useEffect(() => {
+    const updateSidebar = () => {
+      setUsername(localStorage.getItem("username") || "User");
+      setAvatar(localStorage.getItem("profileImage") || null);
+    };
 
-    {/* روابط الملاحة */}
-    <nav style={st.nav}>
-      {links.map(({ to, label, icon }) => (
-        <NavLink
-          key={to}
-          to={to}
-          style={({ isActive }) => mainBtn(isActive)}
-          end
-        >
-          {icon && <span style={{ marginRight: 10 }}>{icon}</span>}
-          <span>{label}</span>
-        </NavLink>
-      ))}
-    </nav>
+    updateSidebar(); // تحميل أولي
 
-    <div style={{ flex: 1 }} />
+    // ✅ استماع لحدث profileUpdated (يُطلقه Settings.js)
+    window.addEventListener("profileUpdated", updateSidebar);
 
-    {/* زر تسجيل الخروج */}
-    <button onClick={onLogout} style={logoutBtn}>
-      <HiArrowRightOnRectangle size={18} style={{ marginRight: 12 }} />
-      Log&nbsp;out
-    </button>
-  </aside>
-);
+    // أيضاً لو فتح في تبويبة ثانية
+    window.addEventListener("storage", updateSidebar);
+
+    return () => {
+      window.removeEventListener("profileUpdated", updateSidebar);
+      window.removeEventListener("storage", updateSidebar);
+    };
+  }, []);
+
+  return (
+    <aside style={st.wrapper}>
+      <div style={st.logo}><span style={st.logoText}>Hayat&nbsp;LMS</span></div>
+
+      <div style={st.card}>
+        <img
+          src={
+            avatar ||
+            `https://api.dicebear.com/6.x/bottts/svg?seed=${username}`
+          }
+          alt="avatar"
+          style={st.avatar}
+        />
+        <span style={st.hello}>Hi,&nbsp;{username.split(" ")[0]}</span>
+      </div>
+
+      <nav style={st.nav}>
+        {links.map(({ to, label, icon }) => (
+          <NavLink
+            key={to}
+            to={to}
+            style={({ isActive }) => mainBtn(isActive)}
+            end
+          >
+            {icon && <span style={{ marginRight: 10 }}>{icon}</span>}
+            <span>{label}</span>
+          </NavLink>
+        ))}
+      </nav>
+
+      <div style={{ flex: 1 }} />
+
+      <button onClick={onLogout} style={logoutBtn}>
+        <HiArrowRightOnRectangle size={18} style={{ marginRight: 12 }} />
+        Log&nbsp;out
+      </button>
+    </aside>
+  );
+};
 
 /* ---------- STYLES ---------- */
 const st = {
@@ -66,21 +84,20 @@ const st = {
     ...FONT,
     width: 300,
     height: "100vh",
-    background: BLUE,
-    color: "white",
+    background: COLOR_SIDEBAR_BG,
+    color: COLOR_TEXT,
     padding: 24,
     display: "flex",
     flexDirection: "column",
     borderRadius: 12,
-    boxSizing: "border-box",
+    boxSizing: "border-box"
   },
-  logo: {
-    marginBottom: 32,
-  },
+  logo: { marginBottom: 32 },
   logoText: {
     fontSize: 32,
     fontWeight: 600,
-    fontFamily: "'Quicksand', sans-serif",
+    color: COLOR_HIGHLIGHT,
+    fontFamily: "'Quicksand',sans-serif"
   },
   card: {
     alignSelf: "center",
@@ -88,40 +105,38 @@ const st = {
     display: "flex",
     alignItems: "center",
     gap: 14,
-    background: "#002357",
+    background: COLOR_CARD_BG,
     padding: 14,
     borderRadius: 10,
-    marginBottom: 36,
+    marginBottom: 36
   },
   avatar: { width: 50, height: 50, borderRadius: "50%" },
   hello:  { fontSize: 15, fontWeight: 500 },
-  nav:    { display: "flex", flexDirection: "column", gap: 18 },
+  nav:    { display: "flex", flexDirection: "column", gap: 18 }
 };
 
-/* زر NavLink */
-const mainBtn = (active) => ({
+const mainBtn = active => ({
   width: "85%",
   height: BTN_H,
   alignSelf: "center",
   display: "flex",
   alignItems: "center",
-  background: active ? SKY_H : SKY,
-  color: BLUE,
+  background: active ? COLOR_HIGHLIGHT : COLOR_CARD_BG,
+  color: COLOR_TEXT,
   paddingLeft: 18,
   borderRadius: 10,
   fontSize: 15,
   fontWeight: 500,
   textDecoration: "none",
-  transition: ".15s",
+  transition: ".15s"
 });
 
-/* زر Log‑out */
 const logoutBtn = {
   ...mainBtn(false),
-  background: "#ffefef",
-  color: "#c0392b",
+  background: COLOR_LOGOUT_BG,
+  color: COLOR_LOGOUT_TX,
   border: "none",
-  cursor: "pointer",
+  cursor: "pointer"
 };
 
 export default Sidebar;

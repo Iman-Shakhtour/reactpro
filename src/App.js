@@ -19,6 +19,7 @@ import MyProfile from "./pages/student/MyProfile";
 import Scholarships from "./pages/student/Scholarships";
 import MyAssignments from "./pages/student/MyAssignments";
 import Settings from "./pages/student/Settings"; // 👈 أضف هذا
+import SolveAssignment from "./pages/student/SolveAssignment";
 
 // 👩‍💼 Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -77,11 +78,19 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route path="courses" element={<MyCourses />} />
-            <Route path="profile" element={<MyProfile />} />
-            <Route path="scholarships" element={<Scholarships />} />
-            <Route path="assignments" element={<MyAssignments />} />
-            <Route path="settings" element={<Settings />} /> 
+           <Route path="/dashboard/student" element={
+  <ProtectedRoute role="ROLE_STUDENT">
+    <StudentDashboard />
+  </ProtectedRoute>
+}>
+  <Route path="courses" element={<MyCourses />} />
+  <Route path="profile" element={<MyProfile />} />
+  <Route path="scholarships" element={<Scholarships />} />
+  <Route path="assignments" element={<MyAssignments />} />
+  <Route path="assignments/:id" element={<SolveAssignment />} />
+  <Route path="settings" element={<Settings />} />
+</Route>
+
           </Route>
 
           {/* 🧑‍🏫 Instructor */}
