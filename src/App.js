@@ -2,35 +2,33 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-// 🏠 Public Pages
+// Public Pages
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
-// 🛡️ Layout & Route Protection
+// Layout & Protected Routing
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 
-// 👨‍🎓 Student Pages
+// Student Pages
 import StudentDashboard from "./pages/student/StudentDashboard";
 import MyCourses from "./pages/student/MyCourses";
 import MyProgress from "./pages/student/MyProgress";
 import MyProfile from "./pages/student/MyProfile";
 import MyScholarships from "./pages/student/MyScholarships";
 
-// 👩‍💼 Admin Pages
+// Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import DashboardHome from "./pages/admin/DashboardHome";
 import ManageUsersPage from "./pages/admin/ManageUsersPage";
+import AddUserPage from "./pages/admin/AddUserPage";
 import ManageCoursesPage from "./pages/admin/ManageCoursesPage";
 import ManageScholarshipsPage from "./pages/admin/ManageScholarshipsPage";
-import ScholarshipAppsPage from "./pages/admin/ScholarshipAppsPage";
-import StudentsPage from "./pages/admin/StudentsPage";
-import InstructorsPage from "./pages/admin/InstructorsPage";
-import DonorsPage from "./pages/admin/DonorsPage";
-import StatisticsPage from "./pages/StatisticsPage";
+import SystemStatisticsPage from "./pages/admin/SystemStatisticsPage";
 
-// 🧑‍🏫 Instructor + Donor
+// Instructor & Donor Dashboards
 import InstructorDashboard from "./pages/InstructorDashboard";
 import DonorDashboard from "./pages/DonorDashboard";
 
@@ -39,16 +37,14 @@ function App() {
     <BrowserRouter>
       <ToastContainer />
       <Routes>
-
-        {/* 🏠 Public Routes */}
+        {/* Public */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
 
-        {/* 🔐 Protected Routes with Layout */}
+        {/* Protected Layout */}
         <Route element={<Layout />}>
-
-          {/* 👩‍💼 Admin */}
+          {/* Admin */}
           <Route
             path="/dashboard/admin"
             element={
@@ -57,17 +53,16 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route path="manage-users" element={<ManageUsersPage />} />
+            <Route index element={<DashboardHome />} />
+            <Route path="manage-users" element={<ManageUsersPage />}>
+              <Route path="add" element={<AddUserPage />} />
+            </Route>
             <Route path="manage-courses" element={<ManageCoursesPage />} />
             <Route path="manage-scholarships" element={<ManageScholarshipsPage />} />
-            <Route path="scholarship-apps" element={<ScholarshipAppsPage />} />
-            <Route path="students" element={<StudentsPage />} />
-            <Route path="instructors" element={<InstructorsPage />} />
-            <Route path="donors" element={<DonorsPage />} />
-            <Route path="stats" element={<StatisticsPage />} />
+            <Route path="stats" element={<SystemStatisticsPage />} />
           </Route>
 
-          {/* 👨‍🎓 Student */}
+          {/* Student */}
           <Route
             path="/dashboard/student"
             element={
@@ -82,7 +77,7 @@ function App() {
             <Route path="scholarships" element={<MyScholarships />} />
           </Route>
 
-          {/* 🧑‍🏫 Instructor */}
+          {/* Instructor */}
           <Route
             path="/dashboard/instructor"
             element={
@@ -92,7 +87,7 @@ function App() {
             }
           />
 
-          {/* 💰 Donor */}
+          {/* Donor */}
           <Route
             path="/dashboard/donor"
             element={
@@ -103,7 +98,7 @@ function App() {
           />
         </Route>
 
-        {/* ❌ 404 Not Found */}
+        {/* 404 Fallback */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>

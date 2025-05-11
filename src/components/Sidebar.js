@@ -65,6 +65,9 @@ const Sidebar = ({ links, title, username, onLogout }) => (
 const st = {
   wrapper: {
     ...FONT,
+    position: "fixed",
+    top: 0,
+    left: 0,
     width: 300,
     height: "100vh",
     background: BLUE,

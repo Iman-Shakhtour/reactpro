@@ -45,10 +45,12 @@ const Layout = () => {
 
         <main
           style={{
+            marginLeft: 300,
             flex: 1,
             padding: "40px 60px",
             background: "#eef5f8",
             minHeight: "100vh",
+            overflowY: "auto",
           }}
         >
           <Outlet />

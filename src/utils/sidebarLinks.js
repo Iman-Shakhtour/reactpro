@@ -7,12 +7,11 @@ import {
 } from "react-icons/hi2";
 
 export const adminLinks = [
-  { to: "/dashboard/manage-users",        label: "Manage Users",        icon: HiOutlineUserGroup  },
-  { to: "/dashboard/manage-courses",      label: "Manage Courses",      icon: HiOutlineBookOpen   },
-  { to: "/dashboard/manage-scholarships", label: "Manage Scholarships", icon: HiOutlineAcademicCap},
-  { to: "/dashboard/stats",               label: "System Stats",        icon: HiOutlineChartBar   },
+  { to: "/dashboard/admin/manage-users",        label: "Manage Users",        icon: HiOutlineUserGroup },
+  { to: "/dashboard/admin/manage-courses",     label: "Manage Courses",      icon: HiOutlineBookOpen },
+  { to: "/dashboard/admin/manage-scholarships",label: "Manage Scholarships", icon: HiOutlineAcademicCap },
+  { to: "/dashboard/admin/stats",              label: "System Stats",        icon: HiOutlineChartBar },
 ];
-
 export const studentLinks = [
   { to: "/dashboard/student/courses",      label: "My Courses",      icon: HiOutlineBookOpen    },
   { to: "/dashboard/student/progress",     label: "My Progress",     icon: HiOutlineChartBar    },
