@@ -1,8 +1,10 @@
-// src/pages/instructor/EditProfile.js
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../api/axiosInstance";
 import { toast } from "react-toastify";
 import { FaUserEdit } from "react-icons/fa";
+
+// Helper to unwrap HATEOAS-style responses
+const unwrap = model => model.content ?? model;
 
 const EditProfile = () => {
   const [profile, setProfile] = useState({
@@ -11,19 +13,18 @@ const EditProfile = () => {
     phoneNumber: "",
     specialty: "",
   });
-
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchProfile = async () => {
       try {
         const res = await axiosInstance.get("/api/instructors/me");
-        const data = res.data.content;
+        const data = unwrap(res.data);
         setProfile({
-          fullName: data.fullName || "",
-          email: data.email || "",
+          fullName:    data.fullName || "",
+          email:       data.email || "",
           phoneNumber: data.phoneNumber || "",
-          specialty: data.specialty || "",
+          specialty:   data.specialty || "",
         });
       } catch (error) {
         toast.error("❌ Unable to load profile info.");
@@ -31,7 +32,6 @@ const EditProfile = () => {
         setLoading(false);
       }
     };
-
     fetchProfile();
   }, []);
 

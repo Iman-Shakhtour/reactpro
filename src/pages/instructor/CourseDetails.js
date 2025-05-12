@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from "react";
 import axiosInstance from "../../api/axiosInstance";
 import { useParams } from "react-router-dom";
+import { toast } from "react-toastify";
+
+// Helper to unwrap HATEOAS-style responses
+const unwrap = model => model.content ?? model;
 
 const CourseDetails = () => {
   const { courseId } = useParams();
@@ -8,63 +12,73 @@ const CourseDetails = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchCourseDetails = async () => {
+    const fetchCourse = async () => {
       try {
-        const response = await axiosInstance.get(`/api/instructor/courses/${courseId}`);
-        setCourse(response.data);
-      } catch (error) {
-        console.error("Failed to fetch course details:", error);
+        // Fetch course details
+        const res = await axiosInstance.get(`/api/courses/${courseId}`);
+        const data = unwrap(res.data);
+        setCourse(data);
+      } catch (err) {
+        console.error("Failed to fetch course details:", err);
+        toast.error("❌ Unable to load course details.");
       } finally {
         setLoading(false);
       }
     };
-
-    fetchCourseDetails();
+    fetchCourse();
   }, [courseId]);
 
   if (loading) return <p>Loading course details...</p>;
   if (!course) return <p>No course data found.</p>;
 
   return (
-    <div className="p-8 bg-gray-50 min-h-screen">
-      <div className="bg-white p-6 rounded-xl shadow-md max-w-4xl mx-auto">
-        <h2 className="text-3xl font-bold mb-2 text-indigo-700">📘 {course.title}</h2>
-        <p className="text-gray-600 mb-4">{course.description}</p>
+    <div style={{ padding: "30px 60px" }}>
+      <div style={{ background: '#fff', padding: 30, borderRadius: 12, boxShadow: '0 0 0 2px #d6ecff', maxWidth: 800, margin: '0 auto' }}>
+        <h2 style={{ fontSize: 26, fontWeight: 'bold', color: '#001943' }}>📘 {course.title}</h2>
+        <p style={{ color: '#666', marginBottom: 24 }}>{course.description}</p>
 
-        <h3 className="text-xl font-semibold mt-6 mb-2">👨‍🎓 Enrolled Students</h3>
-        <ul className="list-disc ml-6 text-gray-700">
+        <section style={{ marginBottom: 24 }}>
+          <h3 style={{ fontSize: 18, fontWeight: 'bold', color: '#001943' }}>👨‍🎓 Enrolled Students</h3>
           {course.students?.length > 0 ? (
-            course.students.map((student) => <li key={student.id}>{student.fullName}</li>)
+            <ul style={{ listStyle: 'disc', paddingLeft: 20 }}>
+              {course.students.map(student => (
+                <li key={student.id}>{student.fullName}</li>
+              ))}
+            </ul>
           ) : (
-            <li>No students enrolled.</li>
+            <p style={{ color: '#666' }}>No students enrolled.</p>
           )}
-        </ul>
+        </section>
 
-        <h3 className="text-xl font-semibold mt-6 mb-2">📄 Uploaded Content</h3>
-        <ul className="list-disc ml-6 text-gray-700">
+        <section style={{ marginBottom: 24 }}>
+          <h3 style={{ fontSize: 18, fontWeight: 'bold', color: '#001943' }}>📄 Uploaded Content</h3>
           {course.content?.length > 0 ? (
-            course.content.map((file, index) => (
-              <li key={index}>
-                <a href={file.url} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">
-                  {file.name}
-                </a>
-              </li>
-            ))
+            <ul style={{ listStyle: 'disc', paddingLeft: 20 }}>
+              {course.content.map((file, idx) => (
+                <li key={idx}>
+                  <a href={file.url} target="_blank" rel="noopener noreferrer" style={{ color: '#001943', fontWeight: 500, textDecoration: 'underline' }}>
+                    {file.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
           ) : (
-            <li>No content uploaded.</li>
+            <p style={{ color: '#666' }}>No content uploaded.</p>
           )}
-        </ul>
+        </section>
 
-        <h3 className="text-xl font-semibold mt-6 mb-2">📝 Assignments</h3>
-        <ul className="list-disc ml-6 text-gray-700">
+        <section>
+          <h3 style={{ fontSize: 18, fontWeight: 'bold', color: '#001943' }}>📝 Assignments</h3>
           {course.assignments?.length > 0 ? (
-            course.assignments.map((assignment) => (
-              <li key={assignment.id}>{assignment.title}</li>
-            ))
+            <ul style={{ listStyle: 'disc', paddingLeft: 20 }}>
+              {course.assignments.map(assign => (
+                <li key={assign.id}>{assign.title}</li>
+              ))}
+            </ul>
           ) : (
-            <li>No assignments created.</li>
+            <p style={{ color: '#666' }}>No assignments created.</p>
           )}
-        </ul>
+        </section>
       </div>
     </div>
   );
