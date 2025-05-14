@@ -17,14 +17,15 @@ const Layout = () => {
     navigate("/");
   };
 
-  const links =
-    role === "ROLE_ADMIN"
-      ? adminLinks
-      : role === "ROLE_STUDENT"
-      ? studentLinks
-      : role === "ROLE_INSTRUCTOR"
-      ? [] // Add appropriate links for instructors here if needed
-      : [];
+const links =
+  role === "ROLE_ADMIN"
+    ? adminLinks
+    : role === "ROLE_STUDENT"
+    ? studentLinks
+    : role === "ROLE_INSTRUCTOR"
+    ? instructorLinks
+    : [];
+
 
   if (noHeaderRoutes.includes(location.pathname)) return <Outlet />;
 
