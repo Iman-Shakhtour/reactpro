@@ -2,8 +2,7 @@ import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { HiBell } from "react-icons/hi2";
 import Sidebar from "./Sidebar";
-import { adminLinks, studentLinks } from "../utils/sidebarLinks";
-
+import { adminLinks, studentLinks, instructorLinks } from "../utils/sidebarLinks";
 const Layout = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -23,6 +22,8 @@ const Layout = () => {
       ? adminLinks
       : role === "ROLE_STUDENT"
       ? studentLinks
+      : role === "ROLE_INSTRUCTOR"
+      ? [] // Add appropriate links for instructors here if needed
       : [];
 
   if (noHeaderRoutes.includes(location.pathname)) return <Outlet />;

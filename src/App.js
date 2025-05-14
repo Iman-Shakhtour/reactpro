@@ -30,7 +30,7 @@ import ManageCoursesPage from "./pages/admin/ManageCoursesPage";
 import ManageScholarshipsPage from "./pages/admin/ManageScholarshipsPage";
 import SystemStatisticsPage from "./pages/admin/SystemStatisticsPage";
 
-// Instructor Pages
+// Instructor Pages ✅ المعتمدة
 import InstructorDashboard from "./pages/instructor/InstructorDashboard";
 import ContentPage from "./pages/instructor/ContentPage";
 import ManageAssignments from "./pages/instructor/ManageAssignments";
@@ -89,7 +89,7 @@ function App() {
             <Route path="assignments/:id" element={<SolveAssignment />} />
           </Route>
 
-          {/* 🧑‍🏫 Instructor */}
+          {/* 🧑‍🏫 Instructor ✅ */}
           <Route
             path="/dashboard/instructor"
             element={

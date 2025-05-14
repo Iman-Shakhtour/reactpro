@@ -56,4 +56,15 @@ export const studentLinks = [
     label: "Settings",
     icon: <HiOutlineChartBar size={18} />,
   },
+
+  
+];
+
+export const instructorLinks = [
+  
+  { to: "/dashboard/instructor/content", label: "Manage Content" },
+  { to: "/dashboard/instructor/assignments", label: "Manage Assignments" },
+  { to: "/dashboard/instructor/submissions", label: "Submitted Assignments" },
+  { to: "/dashboard/instructor/enrolled-students", label: "Enrolled Students" },
+  { to: "/dashboard/instructor/edit-profile", label: "Edit Profile" },
 ];
