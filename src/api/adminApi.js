@@ -1,4 +1,4 @@
-// src/api/adminApi.js
+
 import axiosInstance from "./axiosInstance";
 
 const adminApi = {
@@ -25,8 +25,6 @@ const adminApi = {
     axiosInstance.put(`/api/scholarships/${id}`, data),
   deleteScholarship: id =>
     axiosInstance.delete(`/api/scholarships/${id}`),
-
-  // ─── Assign to Scholarship ────────────────────────
   assignStudentsToScholarship: (scholarshipId, studentIds) =>
     axiosInstance.put(
       `/api/scholarships/${scholarshipId}/students`,
