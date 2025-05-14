@@ -29,6 +29,7 @@ const Layout = () => {
 
   return (
     <>
+      {/* 🔔 Notification icon */}
       <div style={iconBox}>
         <HiBell size={22} style={{ cursor: "pointer", color: "#5C4634" }} />
       </div>
@@ -58,10 +59,12 @@ const iconBox = {
 };
 
 const mainStyle = {
+  marginLeft: 300,
   flex: 1,
+  height: "100vh",           // ✅ حتى يمتد على الشاشة
   padding: "40px 60px",
-  background: "#F9F9F6", // خلفية ناعمة مريحة للعين
-  minHeight: "100vh",
+  background: "#F9F9F6",     // لون الخلفية
+  overflowY: "auto",         // ✅ يسمح بالتمرير العمودي
   overflowX: "hidden",
 };
 
