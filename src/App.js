@@ -30,14 +30,14 @@ import ManageCoursesPage from "./pages/admin/ManageCoursesPage";
 import ManageScholarshipsPage from "./pages/admin/ManageScholarshipsPage";
 import SystemStatisticsPage from "./pages/admin/SystemStatisticsPage";
 
-// Instructor Pages ✅ المعتمدة
-import InstructorDashboard from "./pages/instructor/InstructorDashboard";
-import ContentPage from "./pages/instructor/ContentPage";
-import ManageAssignments from "./pages/instructor/ManageAssignments";
-import SubmittedAssignments from "./pages/instructor/SubmittedAssignments";
-import ViewEnrolledStudents from "./pages/instructor/ViewEnrolledStudents";
-import EditProfile from "./pages/instructor/EditProfile";
-import CourseDetails from "./pages/instructor/CourseDetails";
+ import InstructorDashboard from "./pages/instructor/InstructorDashboard";
+ import ContentPage from "./pages/instructor/ContentPage";
+ import ManageAssignments from "./pages/instructor/ManageAssignments";
+ import SubmittedAssignments from "./pages/instructor/SubmittedAssignments";
+ import ViewEnrolledStudents from "./pages/instructor/ViewEnrolledStudents";
+ import InstructorProfile from "./pages/instructor/InstructorProfile";
+ import InstructorSettings from "./pages/instructor/InstructorSettings";
+ import CourseDetails from "./pages/instructor/CourseDetails";
 
 // Donor Page
 import DonorDashboard from "./pages/DonorDashboard";
@@ -102,8 +102,10 @@ function App() {
             <Route path="assignments" element={<ManageAssignments />} />
             <Route path="submissions" element={<SubmittedAssignments />} />
             <Route path="enrolled-students" element={<ViewEnrolledStudents />} />
-            <Route path="edit-profile" element={<EditProfile />} />
             <Route path="course-details/:courseId" element={<CourseDetails />} />
+            <Route path="profile" element={<InstructorProfile />} />
+             <Route path="settings" element={<InstructorSettings />} />
+
           </Route>
 
           {/* 🤝 Donor */}

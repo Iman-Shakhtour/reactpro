@@ -4,6 +4,8 @@ import {
   HiOutlineAcademicCap,
   HiOutlineChartBar,
 } from "react-icons/hi2";
+import { FaUser, FaCog } from "react-icons/fa";
+
 
 /* ---------- Admin links ---------- */
 export const adminLinks = [
@@ -66,5 +68,7 @@ export const instructorLinks = [
   { to: "/dashboard/instructor/assignments", label: "Manage Assignments" },
   { to: "/dashboard/instructor/submissions", label: "Submitted Assignments" },
   { to: "/dashboard/instructor/enrolled-students", label: "Enrolled Students" },
-  { to: "/dashboard/instructor/edit-profile", label: "Edit Profile" },
+  { to: "/dashboard/instructor/profile",  label: "My Profile", icon: <FaUser /> },
+
+  { to: "/dashboard/instructor/settings", label: "Settings",   icon: <FaCog /> },
 ];
