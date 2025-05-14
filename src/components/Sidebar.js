@@ -1,65 +1,78 @@
-// src/components/Sidebar.js
-import { NavLink }                       from "react-router-dom";
-import {
-  HiUserGroup,
-  HiBookOpen,
-  HiAcademicCap,
-  HiChartBar,
-  HiCog,
-  HiArrowRightOnRectangle,
-} from "react-icons/hi2";
+import { useState, useEffect } from "react";
+import { NavLink } from "react-router-dom";
+import { HiArrowRightOnRectangle } from "react-icons/hi2";
 
-/* ---------- CONFIG ---------- */
-const BLUE  = "#001943";
-const SKY   = "#d6ecff";
-const SKY_H = "#bfe1ff";
+/* ---------- COLORS ---------- */
+const COLOR_SIDEBAR_BG = "#A9BA9D",
+      COLOR_CARD_BG    = "#CCE3C0",
+      COLOR_HIGHLIGHT  = "#E9DCAA",
+      COLOR_TEXT       = "#3B3B3B",
+      COLOR_LOGOUT_BG  = "#E9DCAA",
+      COLOR_LOGOUT_TX  = "#5C4634";
+
 const BTN_H = 48;
-const FONT  = { fontFamily: "'Inter', sans-serif", fontWeight: 300 };
+const FONT  = { fontFamily: "'Inter',sans-serif", fontWeight: 300 };
 
-/* ---------- COMPONENT ---------- */
-const Sidebar = ({ links, title, username, onLogout }) => (
-  <aside style={st.wrapper}>
-<div style={st.logo}>
-  
-  <span style={st.logoText}>Hayat LMS</span>
-</div>
+const Sidebar = ({ links, onLogout = () => {} }) => {
+  const [username, setUsername] = useState("User");
+  const [avatar, setAvatar] = useState(null);
 
+  useEffect(() => {
+    const updateSidebar = () => {
+      setUsername(localStorage.getItem("username") || "User");
+      setAvatar(localStorage.getItem("profileImage") || null);
+    };
 
+    updateSidebar();
 
+    window.addEventListener("profileUpdated", updateSidebar);
+    window.addEventListener("storage", updateSidebar);
 
-    {/* بطاقة المستخدم */}
-    <div style={st.card}>
-      <img
-        src={`https://api.dicebear.com/6.x/bottts/svg?seed=${username}`}
-        alt="avatar"
-        style={st.avatar}
-      />
-      <span style={st.hello}>Hi,&nbsp;{username}</span>
-    </div>
+    return () => {
+      window.removeEventListener("profileUpdated", updateSidebar);
+      window.removeEventListener("storage", updateSidebar);
+    };
+  }, []);
 
-    {/* الملاحة + Settings */}
-    <nav style={st.nav}>
-      {links.map(({ to, label }) => (
-        <NavLink key={to} to={to} end style={mainBtn}>
-          {iconPicker[label]} <span style={{ marginLeft: 12 }}>{label}</span>
-        </NavLink>
-      ))}
+  return (
+    <aside style={st.wrapper}>
+      <div style={st.logo}><span style={st.logoText}>Hayat&nbsp;LMS</span></div>
 
-      {/* Settings أصبح هنا مباشرةً بعد System Stats */}
-      <NavLink to="#" style={mainBtn({ isActive: false })}>
-        <HiCog size={18} style={{ marginRight: 12 }} /> Settings
-      </NavLink>
-    </nav>
+      <div style={st.card}>
+        <img
+          src={
+            avatar ||
+            `https://api.dicebear.com/6.x/bottts/svg?seed=${username}`
+          }
+          alt="avatar"
+          style={st.avatar}
+        />
+        <span style={st.hello}>Hi,&nbsp;{username.split(" ")[0]}</span>
+      </div>
 
-    <div style={{ flex: 1 }} />
+      <nav style={st.nav}>
+        {links.map(({ to, label, icon }) => (
+          <NavLink
+            key={to}
+            to={to}
+            style={({ isActive }) => mainBtn(isActive)}
+            end
+          >
+            {icon && <span style={{ marginRight: 10 }}>{icon}</span>}
+            <span>{label}</span>
+          </NavLink>
+        ))}
+      </nav>
 
-    {/* Log‑out بالأسفل كما هو */}
-    <button onClick={onLogout} style={logoutBtn}>
-      <HiArrowRightOnRectangle size={18} style={{ marginRight: 12 }} />
-      Log&nbsp;out
-    </button>
-  </aside>
-);
+      <div style={{ flex: 1 }} />
+
+      <button onClick={onLogout} style={logoutBtn}>
+        <HiArrowRightOnRectangle size={18} style={{ marginRight: 12 }} />
+        Log&nbsp;out
+      </button>
+    </aside>
+  );
+};
 
 /* ---------- STYLES ---------- */
 const st = {
@@ -70,94 +83,59 @@ const st = {
     left: 0,
     width: 300,
     height: "100vh",
-    background: BLUE,
-    color: "white",
+    background: COLOR_SIDEBAR_BG,
+    color: COLOR_TEXT,
     padding: 24,
     display: "flex",
     flexDirection: "column",
     borderRadius: 12,
-    boxShadow: "0 0 0 2px #00a3ff",
-    boxSizing: "border-box",
+    boxSizing: "border-box"
   },
-  brand: {
-    margin: 0,
-    marginBottom: 32,
-    fontSize: 28,        /* أكبر قليلاً */
-    fontWeight: 500,
-    letterSpacing: 1,
+  logo: { marginBottom: 32 },
+  logoText: {
+    fontSize: 32,
+    fontWeight: 600,
+    color: COLOR_HIGHLIGHT,
+    fontFamily: "'Quicksand',sans-serif"
   },
   card: {
     alignSelf: "center",
-    width: "79%",        /* نفس عرض الأزرار */
+    width: "85%",
     display: "flex",
     alignItems: "center",
     gap: 14,
-    background: "#002357",
+    background: COLOR_CARD_BG,
     padding: 14,
     borderRadius: 10,
-    marginBottom: 36,
+    marginBottom: 36
   },
   avatar: { width: 50, height: 50, borderRadius: "50%" },
   hello:  { fontSize: 15, fontWeight: 500 },
-  nav:    { display: "flex", flexDirection: "column", gap: 18 },
-  logo: {
-    display: "flex",
-    alignItems: "center",
-    gap: 10,
-    marginBottom: 32,
-  },
-  
-  
-  logoText: {
-    alignItems: "center",
-    fontSize: 35,
-    fontWeight: 600,
-    letterSpacing: "0.5px",
-    fontFamily: "'Quicksand', sans-serif",  // أو 'Nunito'
-    
-  
-  },
-  
-  
+  nav:    { display: "flex", flexDirection: "column", gap: 18 }
 };
 
-/* زر الملاحة الرئيسى (و Settings) */
-const mainBtn = ({ isActive = false } = {}) => ({
-  alignSelf: "center",
-  width: "85%",               /* أضيق من كامل السايدبار */
+const mainBtn = active => ({
+  width: "85%",
   height: BTN_H,
+  alignSelf: "center",
   display: "flex",
   alignItems: "center",
-  justifyContent: "flex-start",
-  background: isActive ? SKY_H : SKY,
-  color: BLUE,
+  background: active ? COLOR_HIGHLIGHT : COLOR_CARD_BG,
+  color: COLOR_TEXT,
   paddingLeft: 18,
   borderRadius: 10,
   fontSize: 15,
   fontWeight: 500,
   textDecoration: "none",
-  transition: ".15s",
-}
-);
+  transition: ".15s"
+});
 
-/* زر Log‑out */
 const logoutBtn = {
-  ...mainBtn(),
-  background: "#ffefef",
-  color: "#c0392b",
+  ...mainBtn(false),
+  background: COLOR_LOGOUT_BG,
+  color: COLOR_LOGOUT_TX,
   border: "none",
-  cursor: "pointer",
-  width:150,
-  
-
-};
-
-/* ---------- ICON MAPPER ---------- */
-const iconPicker = {
-  "Manage Users":        <HiUserGroup size={18} />,
-  "Manage Courses":      <HiBookOpen   size={18} />,
-  "Manage Scholarships": <HiAcademicCap size={18} />,
-  "System Stats":        <HiChartBar   size={18} />,
+  cursor: "pointer"
 };
 
 export default Sidebar;

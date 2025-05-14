@@ -8,16 +8,18 @@ import LoginPage from "./pages/LoginPage";
 import SignUpPage from "./pages/SignUpPage";
 import NotFoundPage from "./pages/NotFoundPage";
 
-// Layout & Protected Routing
+// Shared layout and protection
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
 
 // Student Pages
 import StudentDashboard from "./pages/student/StudentDashboard";
 import MyCourses from "./pages/student/MyCourses";
-import MyProgress from "./pages/student/MyProgress";
 import MyProfile from "./pages/student/MyProfile";
-import MyScholarships from "./pages/student/MyScholarships";
+import Scholarships from "./pages/student/Scholarships";
+import MyAssignments from "./pages/student/MyAssignments";
+import Settings from "./pages/student/Settings";
+import SolveAssignment from "./pages/student/SolveAssignment";
 
 // Admin Pages
 import AdminDashboard from "./pages/admin/AdminDashboard";
@@ -28,8 +30,16 @@ import ManageCoursesPage from "./pages/admin/ManageCoursesPage";
 import ManageScholarshipsPage from "./pages/admin/ManageScholarshipsPage";
 import SystemStatisticsPage from "./pages/admin/SystemStatisticsPage";
 
-// Instructor & Donor Dashboards
-import InstructorDashboard from "./pages/InstructorDashboard";
+// Instructor Pages
+import InstructorDashboard from "./pages/instructor/InstructorDashboard";
+import ContentPage from "./pages/instructor/ContentPage";
+import ManageAssignments from "./pages/instructor/ManageAssignments";
+import SubmittedAssignments from "./pages/instructor/SubmittedAssignments";
+import ViewEnrolledStudents from "./pages/instructor/ViewEnrolledStudents";
+import EditProfile from "./pages/instructor/EditProfile";
+import CourseDetails from "./pages/instructor/CourseDetails";
+
+// Donor Page
 import DonorDashboard from "./pages/DonorDashboard";
 
 function App() {
@@ -37,14 +47,14 @@ function App() {
     <BrowserRouter>
       <ToastContainer />
       <Routes>
-        {/* Public */}
+        {/* Public Pages */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/login" element={<LoginPage />} />
         <Route path="/signup" element={<SignUpPage />} />
 
-        {/* Protected Layout */}
+        {/* 🔐 Protected Layout */}
         <Route element={<Layout />}>
-          {/* Admin */}
+          {/* 👩‍💼 Admin */}
           <Route
             path="/dashboard/admin"
             element={
@@ -62,7 +72,7 @@ function App() {
             <Route path="stats" element={<SystemStatisticsPage />} />
           </Route>
 
-          {/* Student */}
+          {/* 👨‍🎓 Student */}
           <Route
             path="/dashboard/student"
             element={
@@ -72,12 +82,14 @@ function App() {
             }
           >
             <Route path="courses" element={<MyCourses />} />
-            <Route path="progress" element={<MyProgress />} />
             <Route path="profile" element={<MyProfile />} />
-            <Route path="scholarships" element={<MyScholarships />} />
+            <Route path="scholarships" element={<Scholarships />} />
+            <Route path="assignments" element={<MyAssignments />} />
+            <Route path="settings" element={<Settings />} />
+            <Route path="assignments/:id" element={<SolveAssignment />} />
           </Route>
 
-          {/* Instructor */}
+          {/* 🧑‍🏫 Instructor */}
           <Route
             path="/dashboard/instructor"
             element={
@@ -85,9 +97,16 @@ function App() {
                 <InstructorDashboard />
               </ProtectedRoute>
             }
-          />
+          >
+            <Route path="content" element={<ContentPage />} />
+            <Route path="assignments" element={<ManageAssignments />} />
+            <Route path="submissions" element={<SubmittedAssignments />} />
+            <Route path="enrolled-students" element={<ViewEnrolledStudents />} />
+            <Route path="edit-profile" element={<EditProfile />} />
+            <Route path="course-details/:courseId" element={<CourseDetails />} />
+          </Route>
 
-          {/* Donor */}
+          {/* 🤝 Donor */}
           <Route
             path="/dashboard/donor"
             element={
@@ -98,7 +117,7 @@ function App() {
           />
         </Route>
 
-        {/* 404 Fallback */}
+        {/* ❌ 404 Not Found */}
         <Route path="*" element={<NotFoundPage />} />
       </Routes>
     </BrowserRouter>
