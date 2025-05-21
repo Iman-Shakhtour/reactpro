@@ -1,8 +1,9 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import Sidebar from "./Sidebar";
-import NotificationBell from "./NotificationBell"; // ✅ الجرس التفاعلي
+import NotificationBell from "./NotificationBell";
 import { adminLinks, studentLinks, instructorLinks } from "../utils/sidebarLinks";
+import Footer from "./Footer";
 
 const Layout = () => {
   const location = useLocation();
@@ -31,7 +32,7 @@ const Layout = () => {
 
   return (
     <>
-      {/* ✅ جرس الإشعارات العائم */}
+      {/* ✅ جرس الإشعارات */}
       <div style={floatingBellStyle}>
         <NotificationBell />
       </div>
@@ -44,9 +45,13 @@ const Layout = () => {
           onLogout={onLogout}
         />
 
-        <main style={mainStyle}>
-          <Outlet />
-        </main>
+        {/* ✅ هذا هو التعديل المهم */}
+        <div style={contentWrapper}>
+          <main style={mainStyle}>
+            <Outlet />
+          </main>
+          <Footer />
+        </div>
       </div>
     </>
   );
@@ -60,11 +65,16 @@ const floatingBellStyle = {
   zIndex: 1000,
 };
 
-const mainStyle = {
-  marginLeft: 300,
+const contentWrapper = {
   flex: 1,
-  height: "100vh",
-  padding: "40px 60px",
+  display: "flex",
+  flexDirection: "column",
+  height: "100vh", // ✅ ضروري عشان الفوتر ينزل تحت
+};
+
+const mainStyle = {
+  flex: 1, // ✅ يخلي المحتوى يتمدد والباقي للفوتر
+  padding: "80px 350px 40px", // ✅ أضفنا margin من الأعلى
   background: "#F9F9F6",
   overflowY: "auto",
   overflowX: "hidden",
