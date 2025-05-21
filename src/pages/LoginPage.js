@@ -21,8 +21,10 @@ const LoginPage = () => {
       const { token } = response.data;
 
       const decoded = jwtDecode(token);
+      console.log("🪪 Decoded JWT:", decoded); // ✅ هذا السطر يطبع محتوى التوكن لفحصه
+
       const role = decoded.role;
-      const userId = decoded.id;
+const userId = decoded.userId; // ✅ هذا الصح
 
       localStorage.setItem("token", token);
       localStorage.setItem("username", username);

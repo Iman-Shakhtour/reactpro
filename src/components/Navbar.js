@@ -1,4 +1,5 @@
-import { HiBell, HiChatBubbleLeftRight } from "react-icons/hi2";
+import { HiChatBubbleLeftRight } from "react-icons/hi2";
+import NotificationBell from "./NotificationBell"; // ✅ استدعاء الجرس
 
 const Navbar = () => {
   const token = localStorage.getItem("token");
@@ -10,7 +11,9 @@ const Navbar = () => {
     <header style={header}>
       <span style={logo}>Hayat LMS</span>
       <div style={icons}>
-        <HiBell size={22} style={icon} />
+        {/* ✅ الجرس التفاعلي */}
+        <NotificationBell />
+        {/* أيقونة الدردشة أو الملاحظات */}
         <HiChatBubbleLeftRight size={22} style={icon} />
       </div>
     </header>
@@ -44,11 +47,12 @@ const logo = {
 const icons = {
   display: "flex",
   gap: 18,
+  alignItems: "center",
 };
 
 const icon = {
   cursor: "pointer",
-  color: "#5C4634", // متناسق مع التصميم
+  color: "#5C4634",
 };
 
 export default Navbar;

@@ -1,8 +1,9 @@
 import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
-import { HiBell } from "react-icons/hi2";
 import Sidebar from "./Sidebar";
+import NotificationBell from "./NotificationBell"; // ✅ الجرس التفاعلي
 import { adminLinks, studentLinks, instructorLinks } from "../utils/sidebarLinks";
+
 const Layout = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -17,23 +18,22 @@ const Layout = () => {
     navigate("/");
   };
 
-const links =
-  role === "ROLE_ADMIN"
-    ? adminLinks
-    : role === "ROLE_STUDENT"
-    ? studentLinks
-    : role === "ROLE_INSTRUCTOR"
-    ? instructorLinks
-    : [];
-
+  const links =
+    role === "ROLE_ADMIN"
+      ? adminLinks
+      : role === "ROLE_STUDENT"
+      ? studentLinks
+      : role === "ROLE_INSTRUCTOR"
+      ? instructorLinks
+      : [];
 
   if (noHeaderRoutes.includes(location.pathname)) return <Outlet />;
 
   return (
     <>
-      {/* 🔔 Notification icon */}
-      <div style={iconBox}>
-        <HiBell size={22} style={{ cursor: "pointer", color: "#5C4634" }} />
+      {/* ✅ جرس الإشعارات العائم */}
+      <div style={floatingBellStyle}>
+        <NotificationBell />
       </div>
 
       <div style={{ display: "flex" }}>
@@ -53,7 +53,7 @@ const links =
 };
 
 /* ---------- STYLES ---------- */
-const iconBox = {
+const floatingBellStyle = {
   position: "fixed",
   top: 16,
   right: 24,
@@ -63,10 +63,10 @@ const iconBox = {
 const mainStyle = {
   marginLeft: 300,
   flex: 1,
-  height: "100vh",           // ✅ حتى يمتد على الشاشة
+  height: "100vh",
   padding: "40px 60px",
-  background: "#F9F9F6",     // لون الخلفية
-  overflowY: "auto",         // ✅ يسمح بالتمرير العمودي
+  background: "#F9F9F6",
+  overflowY: "auto",
   overflowX: "hidden",
 };
 

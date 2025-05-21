@@ -1,0 +1,113 @@
+.notification-container {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.bell-icon {
+  font-size: 22px;
+  position: relative;
+  color: #5C4634;
+  transition: transform 0.3s;
+}
+
+.bell-icon:hover {
+  transform: scale(1.2);
+}
+
+.badge {
+  background: #C0392B;
+  color: white;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 50%;
+  position: absolute;
+  top: -6px;
+  right: -10px;
+  font-weight: bold;
+}
+.dropdown {
+  position: absolute;
+  right: 0;
+  top: 30px;
+  width: 300px;               /* 🔽 قلل العرض شوي */
+  max-height: 500px;          /* ✅ أقصى ارتفاع */
+  overflow-y: auto;           /* ✅ سكرول عمودي */
+  background: #F5FBEF;
+  border: 1px solid #CCE3C0;
+  border-radius: 12px;
+  z-index: 1000;
+  padding: 12px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.dropdown-header {
+  font-size: 16px;
+  font-weight: bold;
+  color: #5C4634;
+  margin-bottom: 10px;
+  border-bottom: 1px solid #CCE3C0;
+  padding-bottom: 4px;
+}
+
+.notification {
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 8px;
+  background-color: #fff;
+  border: 1px solid #E6F0D9;
+  transition: background-color 0.2s;
+}
+
+.notification.unread {
+  background-color: #E9FBD7;
+  border-color: #B5D8A6;
+}
+
+.notification strong {
+  color: #3B3B3B;
+}
+
+.notification p {
+  margin: 4px 0 6px;
+  font-size: 14px;
+  color: #666;
+}
+
+.notification button {
+  background: none;
+  border: none;
+  color: #5A8F46;
+  font-size: 12px;
+  cursor: pointer;
+  padding: 0;
+  text-decoration: underline;
+}
+
+.notification button:hover {
+  color: #3B5E2B;
+}
+
+.empty-msg {
+  padding: 10px;
+  text-align: center;
+  font-size: 14px;
+  color: #777;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.notif-time {
+  font-size: 11px;
+  color: #999;
+  margin-bottom: 6px;
+}
