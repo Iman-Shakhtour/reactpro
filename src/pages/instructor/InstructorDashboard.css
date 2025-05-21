@@ -1,0 +1,64 @@
+.instructor-dashboard {
+  padding: 40px 60px;
+  background: #F9F9F6;
+  font-family: "Quicksand", sans-serif;
+}
+
+.header h1 {
+  margin: 0;
+  color: #2E2E2E;
+}
+
+.header p {
+  color: #5C4634;
+  margin-top: 6px;
+  font-size: 16px;
+}
+
+.courses-section {
+  margin-top: 40px;
+}
+
+.courses-section h2 {
+  font-size: 22px;
+  color: #3B3B3B;
+  margin-bottom: 20px;
+}
+
+.status {
+  color: #777;
+  font-style: italic;
+}
+
+.course-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+}
+
+.course-card {
+  background: #CCE3C0;
+  border-left: 6px solid #A9BA9D;
+  padding: 20px;
+  border-radius: 12px;
+  text-decoration: none;
+  color: #333;
+  transition: transform 0.2s ease;
+}
+
+.course-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.course-card h3 {
+  margin-top: 0;
+  font-size: 18px;
+  color: #001943;
+}
+
+.course-card p {
+  margin: 8px 0 0;
+  font-size: 14px;
+  color: #444;
+}

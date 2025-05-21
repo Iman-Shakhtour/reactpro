@@ -2,8 +2,8 @@ import React, { useEffect, useState } from "react";
 import { Outlet, Link } from "react-router-dom";
 import axiosInstance from "../../api/axiosInstance";
 import { toast } from "react-toastify";
+import "./InstructorDashboard.css";
 
-// Helper to unwrap HATEOAS-style responses
 const unwrap = model => model.content ?? model;
 
 const InstructorDashboard = () => {
@@ -14,11 +14,9 @@ const InstructorDashboard = () => {
   useEffect(() => {
     const loadCourses = async () => {
       try {
-        // 1) Who am I?
         const meRes = await axiosInstance.get("/api/instructors/me");
         const me = unwrap(meRes.data);
 
-        // 2) Fetch all courses and filter to mine
         const allRes = await axiosInstance.get("/api/courses");
         const allCourses = allRes.data.map(unwrap);
         const myCourses = allCourses.filter(c => c.instructorId === me.id);
@@ -36,34 +34,34 @@ const InstructorDashboard = () => {
   }, []);
 
   return (
-    <div style={{ padding: "30px 60px" }}>
-      <h1 style={{ marginTop: 0 }}>Instructor Dashboard</h1>
-      <p>Welcome&nbsp;Back,&nbsp;{username}</p>
+    <div className="instructor-dashboard">
+      <div className="header">
+        <p>Welcome back, <strong>{username}</strong> 👋</p>
+      </div>
 
-      <section style={{ margin: "24px 0" }}>
-        <h2 style={{ fontSize: 20, fontWeight: "bold", color: "#001943" }}>📚 My Courses</h2>
+      <div className="courses-section">
+        <h2>📚 My Courses</h2>
 
         {loading ? (
-          <p>Loading courses…</p>
+          <p className="status">Loading courses…</p>
         ) : courses.length === 0 ? (
-          <p style={{ color: "#666" }}>You have no courses yet.</p>
+          <p className="status">You have no courses yet.</p>
         ) : (
-          <ul style={{ listStyle: "none", padding: 0 }}>
+          <div className="course-cards">
             {courses.map(course => (
-              <li key={course.id} style={{ marginBottom: 8 }}>
-                <Link
-                  to={`course-details/${course.id}`}
-                  style={{ textDecoration: "none", color: "#001943", fontWeight: 500 }}
-                >
-                  ➡️ {course.title}
-                </Link>
-              </li>
+              <Link
+                to={`course-details/${course.id}`}
+                key={course.id}
+                className="course-card"
+              >
+                <h3>{course.title}</h3>
+                <p>{course.description?.slice(0, 80) || "No description available."}</p>
+              </Link>
             ))}
-          </ul>
+          </div>
         )}
-      </section>
+      </div>
 
-      {/* Renders nested routes like Content, Assignments, CourseDetails, etc. */}
       <Outlet />
     </div>
   );

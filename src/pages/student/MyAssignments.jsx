@@ -77,7 +77,7 @@ export default function MyAssignments() {
 
   return (
     <section className="assign-wrapper">
-      <h2 className="assign-heading">📚 My Assignments</h2>
+      <h2 className="assign-heading"> My Assignments</h2>
 
       {loading ? (
         <p className="assign-msg">Loading…</p>

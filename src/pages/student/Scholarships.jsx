@@ -12,20 +12,25 @@ const Scholarships = () => {
   useEffect(() => {
     const load = async () => {
       try {
-        const [sch, stu] = await Promise.all([
-          studentApi.getScholarships(),
-          studentApi.getProfile(),
-        ]);
-        setAll(sch.data.map((m) => m.content || m));
-        const id = stu.data.content?.id ?? stu.data.id;
+        const schRes = await studentApi.getScholarships();
+        setAll(schRes.data.map((m) => m.content || m));
+      } catch (err) {
+        toast.error("Failed to load scholarships.");
+      }
+
+      try {
+        const stuRes = await studentApi.getProfile();
+        const id = stuRes.data.content?.id ?? stuRes.data.id;
+
         const appRes = await studentApi.getMyApplications(id);
         setApps(appRes.data.map((m) => m.content || m));
-      } catch {
-        toast.error("❌ Failed to load scholarships.");
+      } catch (err) {
+        console.warn("Failed to load scholarship applications", err);
       } finally {
         setLoading(false);
       }
     };
+
     load();
   }, []);
 
@@ -38,15 +43,15 @@ const Scholarships = () => {
       <div className="card-header">{s.name}</div>
       <div className="card-body">
         <div className="card-row">
-          <span>💰 Amount</span>
+          <span>Amount</span>
           <span>${s.totalAmount?.toLocaleString()}</span>
         </div>
         <div className="card-row">
-          <span>👥 Slots</span>
+          <span>Slots</span>
           <span>{s.availableSlots}</span>
         </div>
         <div className="card-row">
-          <span>🌍 Region</span>
+          <span>Region</span>
           <span>{s.targetRegion || "-"}</span>
         </div>
       </div>
@@ -62,11 +67,11 @@ const Scholarships = () => {
       <div className="card-header">{a.scholarshipName || `Scholarship #${a.scholarshipId}`}</div>
       <div className="card-body">
         <div className="card-row">
-          <span>💵 Requested</span>
+          <span>Requested</span>
           <span>{a.amount ?? "-"}</span>
         </div>
         <div className="card-row">
-          <span>📌 Status</span>
+          <span>Status</span>
           <span className={`status ${a.status}`}>{a.status}</span>
         </div>
       </div>
@@ -77,7 +82,7 @@ const Scholarships = () => {
 
   return (
     <div className="scholarships-page">
-      <h2 className="page-title">🎓 Scholarships</h2>
+      <h2 className="page-title">Scholarships</h2>
 
       <div className="tabs">
         <span className={`tab ${tab === "all" ? "active" : ""}`} onClick={() => setTab("all")}>

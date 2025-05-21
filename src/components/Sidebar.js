@@ -47,7 +47,7 @@ const Sidebar = ({ links, onLogout = () => {} }) => {
           alt="avatar"
           style={st.avatar}
         />
-        <span style={st.hello}>Hi,&nbsp;{username.split(" ")[0]}</span>
+        <span style={st.hello}>&nbsp;{username.split(" ")[0]}</span>
       </div>
 
       <nav style={st.nav}>

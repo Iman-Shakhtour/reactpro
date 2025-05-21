@@ -29,7 +29,7 @@ const MyCourses = () => {
   return (
     <div style={{ padding: "30px" }}>
       <h2 style={{ fontSize: "24px", fontWeight: "bold", marginBottom: "25px" }}>
-        📚 My Courses & Progress
+         My Courses & Progress
       </h2>
 
       {loading ? (

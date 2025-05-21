@@ -1,0 +1,57 @@
+.student-dashboard {
+  padding: 40px 60px;
+  background: #f9f9f6;
+  font-family: "Quicksand", sans-serif;
+}
+
+.header h1 {
+  margin: 0;
+  color: #2e2e2e;
+}
+
+.header p {
+  margin-top: 8px;
+  color: #5c4634;
+}
+
+.overview-section {
+  margin-top: 32px;
+}
+
+.overview-section h2 {
+  font-size: 22px;
+  color: #3b3b3b;
+  margin-bottom: 20px;
+}
+
+.overview-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 20px;
+}
+
+.card {
+  background: #cce3c0;
+  border-left: 6px solid #a9ba9d;
+  padding: 16px;
+  border-radius: 8px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+}
+
+.card h3 {
+  margin: 0 0 8px;
+  color: #001943;
+}
+
+.card p {
+  margin: 0;
+  color: #444;
+}
+
+
+

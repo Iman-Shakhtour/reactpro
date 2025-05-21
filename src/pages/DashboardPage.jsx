@@ -15,22 +15,22 @@ const DashboardPage = () => {
         </h1>
 
         <p style={{ marginBottom: "20px" }}>
-          Welcome {username}! Manage users, courses, donations, and system settings.
+           {username}
         </p>
 
         {role === "ROLE_ADMIN" && (
           <div style={{ display: "flex", flexDirection: "column", gap: "15px" }}>
             <Link to="/dashboard/manage-users" style={linkStyle}>
-              👥 Manage Users
+               Manage Users
             </Link>
             <Link to="/dashboard/manage-courses" style={linkStyle}>
-              🎓 Manage Courses
+               Manage Courses
             </Link>
             <Link to="/dashboard/manage-scholarships" style={linkStyle}>
-              🎯 Manage Scholarships
+               Manage Scholarships
             </Link>
             <Link to="/dashboard/stats" style={linkStyle}>
-              📊 View Donation Statistics
+               View Donation Statistics
             </Link>
           </div>
         )}
