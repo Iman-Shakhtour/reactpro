@@ -1,19 +1,14 @@
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import { HiArrowRightOnRectangle } from "react-icons/hi2";
-
-/* ---------- COLORS ---------- */
-const COLOR_SIDEBAR_BG = "#A9BA9D",
-      COLOR_CARD_BG    = "#CCE3C0",
-      COLOR_HIGHLIGHT  = "#E9DCAA",
-      COLOR_TEXT       = "#3B3B3B",
-      COLOR_LOGOUT_BG  = "#E9DCAA",
-      COLOR_LOGOUT_TX  = "#5C4634";
-
-const BTN_H = 48;
-const FONT  = { fontFamily: "'Inter',sans-serif", fontWeight: 300 };
+import {
+  HiArrowRightOnRectangle,
+  HiBars3
+} from "react-icons/hi2";
+import { useSidebar } from "./SidebarContext";
+import "./Sidebar.css";
 
 const Sidebar = ({ links, onLogout = () => {} }) => {
+  const { isSidebarOpen, toggleSidebar } = useSidebar();
   const [username, setUsername] = useState("User");
   const [avatar, setAvatar] = useState(null);
 
@@ -22,12 +17,9 @@ const Sidebar = ({ links, onLogout = () => {} }) => {
       setUsername(localStorage.getItem("username") || "User");
       setAvatar(localStorage.getItem("profileImage") || null);
     };
-
     updateSidebar();
-
     window.addEventListener("profileUpdated", updateSidebar);
     window.addEventListener("storage", updateSidebar);
-
     return () => {
       window.removeEventListener("profileUpdated", updateSidebar);
       window.removeEventListener("storage", updateSidebar);
@@ -35,107 +27,61 @@ const Sidebar = ({ links, onLogout = () => {} }) => {
   }, []);
 
   return (
-    <aside style={st.wrapper}>
-      <div style={st.logo}><span style={st.logoText}>Hayat&nbsp;LMS</span></div>
-
-      <div style={st.card}>
-        <img
-          src={
-            avatar ||
-            `https://api.dicebear.com/6.x/bottts/svg?seed=${username}`
-          }
-          alt="avatar"
-          style={st.avatar}
+    <aside className="sidebar" style={{ width: isSidebarOpen ? 300 : 100 }}>
+      {/* ✅ زر الشحطات */}
+      <div className="sidebar-toggle">
+        <HiBars3
+          size={24}
+          onClick={toggleSidebar}
+          style={{ cursor: "pointer", color: "#5C4634" }}
         />
-        <span style={st.hello}>&nbsp;{username.split(" ")[0]}</span>
       </div>
 
-      <nav style={st.nav}>
+      {isSidebarOpen && (
+        <>
+          <div className="sidebar-logo">Hayat&nbsp;LMS</div>
+
+          <div className="sidebar-card">
+            <img
+              src={
+                avatar ||
+                `https://api.dicebear.com/6.x/bottts/svg?seed=${username}`
+              }
+              alt="avatar"
+              className="sidebar-avatar"
+            />
+            <span className="sidebar-hello">{username.split(" ")[0]}</span>
+          </div>
+        </>
+      )}
+
+      <nav className="sidebar-nav">
         {links.map(({ to, label, icon }) => (
           <NavLink
             key={to}
             to={to}
-            style={({ isActive }) => mainBtn(isActive)}
+            className={({ isActive }) =>
+              `sidebar-link ${isActive ? "active" : ""}`
+            }
             end
+            title={!isSidebarOpen ? label : ""}
           >
-            {icon && <span style={{ marginRight: 10 }}>{icon}</span>}
-            <span>{label}</span>
+            {icon && <span style={{ marginRight: isSidebarOpen ? 10 : 0 }}>{icon}</span>}
+            {isSidebarOpen && <span>{label}</span>}
           </NavLink>
         ))}
       </nav>
 
       <div style={{ flex: 1 }} />
 
-      <button onClick={onLogout} style={logoutBtn}>
-        <HiArrowRightOnRectangle size={18} style={{ marginRight: 12 }} />
-        Log&nbsp;out
-      </button>
+      {isSidebarOpen && (
+        <button onClick={onLogout} className="sidebar-logout sidebar-link">
+          <HiArrowRightOnRectangle size={18} style={{ marginRight: 12 }} />
+          Log&nbsp;out
+        </button>
+      )}
     </aside>
   );
-};
-
-/* ---------- STYLES ---------- */
-const st = {
-  wrapper: {
-    ...FONT,
-    position: "fixed",
-    top: 0,
-    left: 0,
-    width: 300,
-    height: "100vh",
-    background: COLOR_SIDEBAR_BG,
-    color: COLOR_TEXT,
-    padding: 24,
-    display: "flex",
-    flexDirection: "column",
-    borderRadius: 12,
-    boxSizing: "border-box"
-  },
-  logo: { marginBottom: 32 },
-  logoText: {
-    fontSize: 32,
-    fontWeight: 600,
-    color: COLOR_HIGHLIGHT,
-    fontFamily: "'Quicksand',sans-serif"
-  },
-  card: {
-    alignSelf: "center",
-    width: "85%",
-    display: "flex",
-    alignItems: "center",
-    gap: 14,
-    background: COLOR_CARD_BG,
-    padding: 14,
-    borderRadius: 10,
-    marginBottom: 36
-  },
-  avatar: { width: 50, height: 50, borderRadius: "50%" },
-  hello:  { fontSize: 15, fontWeight: 500 },
-  nav:    { display: "flex", flexDirection: "column", gap: 18 }
-};
-
-const mainBtn = active => ({
-  width: "85%",
-  height: BTN_H,
-  alignSelf: "center",
-  display: "flex",
-  alignItems: "center",
-  background: active ? COLOR_HIGHLIGHT : COLOR_CARD_BG,
-  color: COLOR_TEXT,
-  paddingLeft: 18,
-  borderRadius: 10,
-  fontSize: 15,
-  fontWeight: 500,
-  textDecoration: "none",
-  transition: ".15s"
-});
-
-const logoutBtn = {
-  ...mainBtn(false),
-  background: COLOR_LOGOUT_BG,
-  color: COLOR_LOGOUT_TX,
-  border: "none",
-  cursor: "pointer"
 };
 
 export default Sidebar;

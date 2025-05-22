@@ -4,7 +4,7 @@ import Sidebar from "./Sidebar";
 import NotificationBell from "./NotificationBell";
 import { adminLinks, studentLinks, instructorLinks } from "../utils/sidebarLinks";
 import Footer from "./Footer";
-
+import Navbar from "./Navbar";
 const Layout = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -37,6 +37,17 @@ const Layout = () => {
         <NotificationBell />
       </div>
 
+ <Navbar /> {/* ⬅️ render the navbar */}
+    <div style={{ display: "flex" }}>
+      <Sidebar
+        links={links}
+        title="Hayat"
+        username={username}
+        onLogout={onLogout}
+      />
+      ...
+    </div>
+    
       <div style={{ display: "flex" }}>
         <Sidebar
           links={links}

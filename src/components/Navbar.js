@@ -9,12 +9,9 @@ const Navbar = () => {
 
   return (
     <header style={header}>
-      <span style={logo}>Hayat LMS</span>
-      <div style={icons}>
+      <div >
         {/* ✅ الجرس التفاعلي */}
-        <NotificationBell />
         {/* أيقونة الدردشة أو الملاحظات */}
-        <HiChatBubbleLeftRight size={22} style={icon} />
       </div>
     </header>
   );
@@ -31,9 +28,8 @@ const header = {
   alignItems: "center",
   justifyContent: "space-between",
   padding: "0 24px",
-  background: "#CCE3C0", // Tea Green
-  color: "#3B3B3B",
-  boxShadow: "0 2px 8px rgba(0,0,0,0.05)",
+  background: "#F9F9F6",
+
   zIndex: 999,
 };
 
@@ -44,11 +40,6 @@ const logo = {
   fontFamily: "'Quicksand', sans-serif",
 };
 
-const icons = {
-  display: "flex",
-  gap: 18,
-  alignItems: "center",
-};
 
 const icon = {
   cursor: "pointer",
