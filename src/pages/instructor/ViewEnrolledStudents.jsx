@@ -28,7 +28,7 @@ const ViewEnrolledStudents = () => {
         const enRes = await axiosInstance.get("/api/enrollments");
         const enrolls = enRes.data.map(unwrap).map(e => ({
           ...e,
-          student: e.student,                  // assume nested student
+          student: e.student,
           courseTitle: allCourses.find(c => c.id === e.courseId)?.title || ""
         }));
         setAllEnrollments(enrolls);
@@ -74,7 +74,7 @@ const ViewEnrolledStudents = () => {
             <ul style={styles.list}>
               {filtered.map(en => (
                 <li key={en.id} style={styles.listItem}>
-                  <strong>{en.student.fullName}</strong> — {en.student.email}
+                  <strong>{en.student?.fullName || "Unnamed Student"}</strong> — {en.student?.email || "No email"}
                 </li>
               ))}
             </ul>

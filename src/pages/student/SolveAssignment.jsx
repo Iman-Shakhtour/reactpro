@@ -9,7 +9,7 @@ export default function SolveAssignment() {
   const [assignment, setAssignment] = useState(null);
   const [answers, setAnswers] = useState({});
   const [loading, setLoading] = useState(true);
-  const [submitted, setSubmitted] = useState(false); // لمنع الإرسال المتكرر
+  const [submitted, setSubmitted] = useState(false);
 
   useEffect(() => {
     const load = async () => {
@@ -47,11 +47,18 @@ export default function SolveAssignment() {
     checkSubmission();
   }, [id]);
 
+  // ✅ Safe parsing with checks
   const parseCorrectAnswers = (str) => {
-    return (str || "").split(",").map((pair) => {
-      const [q, a] = pair.split("=");
-      return { q: q.trim(), a: a.trim() };
-    });
+    return (str || "")
+      .split(",")
+      .map((pair) => {
+        const parts = pair.split("=");
+        const q = parts[0]?.trim();
+        const a = parts[1]?.trim();
+        if (!q || !a) return null;
+        return { q, a };
+      })
+      .filter(Boolean); // remove nulls
   };
 
   const handleChange = (q, value) => {
@@ -70,7 +77,7 @@ export default function SolveAssignment() {
     const submission = {
       studentId: parseInt(studentId),
       assessmentId: parseInt(id),
-      answers: JSON.stringify(answers), // ✅ تم تصحيح هذا السطر
+      answers: JSON.stringify(answers),
       submittedDate: new Date().toISOString(),
     };
 
@@ -102,7 +109,7 @@ export default function SolveAssignment() {
               onChange={(e) => handleChange(q, e.target.value)}
               className="question-select"
               required
-              disabled={submitted} // ✅ تعطيل بعد التسليم
+              disabled={submitted}
             >
               <option value="">Select answer</option>
               <option value="A">A</option>

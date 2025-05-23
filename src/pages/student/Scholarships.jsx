@@ -52,7 +52,7 @@ const Scholarships = () => {
 
     const payload = {
       studentId     : me.id,
-      courseId      : scholarship.courseId,
+courseId      : scholarship.courseId ?? null,
       scholarshipId : scholarship.id,
       reason,
       lifeCondition : life,
