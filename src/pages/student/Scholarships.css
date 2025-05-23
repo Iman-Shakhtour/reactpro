@@ -1,13 +1,33 @@
-.scholarships-page {
-  padding: 24px;
-  background-color: #F9F9F6;
+/* 1) Theme variables */
+:root {
+  --bg-page: #F9F9F6;
+  --card-bg: #CCE3C0;
+  --card-header-bg: #A9BA9D;
+  --accent: #5C8A45;
+  --accent-dark: #4e7037;
+  --text-main: #3B3B3B;
+  --text-muted: #6B7280;
+  --border-light: #A9BA9D;
+  --form-bg: #EEF5EC;
 }
 
+/* 2) Base */
+body {
+  background: var(--bg-page);
+  font-family: "Inter", sans-serif;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.scholarships-page {
+  padding: 24px;
+}
+
+/* 3) Title & tabs */
 .page-title {
-  font-size: 24px;
+  font-size: 1.75rem;
   font-weight: 700;
   margin-bottom: 16px;
-  color: #3B3B3B;
 }
 
 .tabs {
@@ -15,45 +35,58 @@
   gap: 12px;
   margin-bottom: 24px;
 }
-
 .tab {
+  position: relative;
   padding: 8px 16px;
-  cursor: pointer;
   font-weight: 600;
-  border-bottom: 3px solid transparent;
-  color: #6b7280;
-  transition: all 0.2s ease;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color .2s;
 }
-
+.tab:hover {
+  color: var(--accent);
+}
 .tab.active {
-  border-bottom: 3px solid #A9BA9D;
-  color: #3B3B3B;
+  color: var(--text-main);
+}
+.tab.active::after {
+  content: "";
+  position: absolute;
+  bottom: -3px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: var(--border-light);
 }
 
+/* 4) Card grid */
 .card-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: 24px;
 }
 
+/* 5) Cards */
 .card {
-  background: #CCE3C0;
+  background: var(--card-bg);
   border-radius: 16px;
-  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 3px 10px rgba(0,0,0,0.08);
   overflow: hidden;
-  transition: transform 0.2s;
   display: flex;
   flex-direction: column;
-  color: #3B3B3B;
+  transition: transform .2s, box-shadow .2s;
+}
+.card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.12);
 }
 
 .card-header {
-  background: #A9BA9D;
-  color: #3B3B3B;
-  padding: 18px 16px;
-  font-size: 18px;
-  font-weight: 600;
+  background: var(--card-header-bg);
+  padding: 18px;
   text-align: center;
+  font-size: 1.125rem;
+  font-weight: 600;
 }
 
 .card-body {
@@ -66,23 +99,87 @@
 .card-row {
   display: flex;
   justify-content: space-between;
+  font-size: 0.95rem;
 }
 
+/* 6) Status pills */
 .status {
   padding: 4px 10px;
   border-radius: 12px;
-  font-size: 12px;
+  font-size: 0.75rem;
   color: #fff;
+  text-transform: uppercase;
+}
+.status.APPROVED { background: #80B155; }
+.status.PENDING  { background: #D9A257; }
+.status.REJECTED { background: #EF4444; }
+
+/* 7) Apply button */
+.apply-btn {
+  margin-top: 12px;
+  background-color: var(--accent);
+  color: #fff;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background .2s, transform .1s;
+}
+.apply-btn:hover:not(:disabled) {
+  background-color: var(--accent-dark);
+  transform: translateY(-1px);
+}
+.apply-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
 }
 
-.status.APPROVED {
-  background: #80B155;
+/* 8) Inline form */
+.application-form {
+  margin-top: 16px;
+  padding: 16px;
+  background: var(--form-bg);
+  border: 1px solid var(--border-light);
+  border-radius: 8px;
+}
+.application-form h4 {
+  margin-bottom: 8px;
+  font-size: 1rem;
+}
+.application-form label {
+  display: block;
+  margin-top: 12px;
+  font-size: 0.875rem;
+}
+.application-form textarea {
+  width: 100%;
+  min-height: 60px;
+  margin-top: 4px;
+  padding: 8px;
+  border: 1px solid var(--border-light);
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 0.9rem;
+  resize: vertical;
 }
 
-.status.PENDING {
-  background: #D9A257;
+/* 9) Form buttons */
+.form-buttons {
+  margin-top: 12px;
+  display: flex;
+  gap: 8px;
 }
-
-.status.REJECTED {
-  background: #EF4444;
+.cancel-btn {
+  background: transparent;
+  border: 1px solid var(--accent);
+  color: var(--accent);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background .2s;
+}
+.cancel-btn:hover {
+  background: rgba(92, 138, 69, 0.1);
 }

@@ -1,8 +1,10 @@
+// src/components/Sidebar.js
 import { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import {
   HiArrowRightOnRectangle,
-  HiBars3
+  HiBars3,
+  HiDocumentText
 } from "react-icons/hi2";
 import { useSidebar } from "./SidebarContext";
 import "./Sidebar.css";
@@ -11,11 +13,13 @@ const Sidebar = ({ links, onLogout = () => {} }) => {
   const { isSidebarOpen, toggleSidebar } = useSidebar();
   const [username, setUsername] = useState("User");
   const [avatar, setAvatar] = useState(null);
+  const [role, setRole] = useState("");
 
   useEffect(() => {
     const updateSidebar = () => {
       setUsername(localStorage.getItem("username") || "User");
       setAvatar(localStorage.getItem("profileImage") || null);
+      setRole(localStorage.getItem("role") || ""); // ✅ قراءة الدور من التخزين
     };
     updateSidebar();
     window.addEventListener("profileUpdated", updateSidebar);
@@ -26,9 +30,16 @@ const Sidebar = ({ links, onLogout = () => {} }) => {
     };
   }, []);
 
+  // ✅ بناء قائمة الروابط مع إضافة رابط الطلبات للإدمن فقط
+  const internalLinks = [
+    ...(links || []),
+    ...(role === "ROLE_ADMIN"
+      ? []
+      : [])
+  ];
+
   return (
     <aside className="sidebar" style={{ width: isSidebarOpen ? 300 : 100 }}>
-      {/* ✅ زر الشحطات */}
       <div className="sidebar-toggle">
         <HiBars3
           size={24}
@@ -40,7 +51,6 @@ const Sidebar = ({ links, onLogout = () => {} }) => {
       {isSidebarOpen && (
         <>
           <div className="sidebar-logo">Hayat&nbsp;LMS</div>
-
           <div className="sidebar-card">
             <img
               src={
@@ -56,7 +66,7 @@ const Sidebar = ({ links, onLogout = () => {} }) => {
       )}
 
       <nav className="sidebar-nav">
-        {links.map(({ to, label, icon }) => (
+        {internalLinks.map(({ to, label, icon }) => (
           <NavLink
             key={to}
             to={to}

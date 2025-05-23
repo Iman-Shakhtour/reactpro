@@ -1,107 +1,163 @@
+/*  Scholarships.jsx  */
 import React, { useEffect, useState } from "react";
 import studentApi from "../../api/studentApi";
 import { toast } from "react-toastify";
 import "./Scholarships.css";
 
 const Scholarships = () => {
-  const [tab, setTab] = useState("all"); // all | my
-  const [all, setAll] = useState([]);
-  const [apps, setApps] = useState([]);
-  const [loading, setLoading] = useState(true);
+  /* تبويبات – بيانات – تحميل */
+  const [tab, setTab]       = useState("all");
+  const [all, setAll]       = useState([]);
+  const [apps, setApps]     = useState([]);
+  const [loading, setLoad]  = useState(true);
 
+  /* معلومات الطالب الحالي (نحتاج الـ id) */
+  const [me, setMe]         = useState(null);
+
+  /* ID المنحة المفتوح فورمها */
+  const [applyingId, setApplyingId] = useState(null);
+
+  /* ───────── تحميل مبدئي ───────── */
   useEffect(() => {
-    const load = async () => {
+    const bootstrap = async () => {
       try {
-        const schRes = await studentApi.getScholarships();
-        setAll(schRes.data.map((m) => m.content || m));
-      } catch (err) {
-        toast.error("Failed to load scholarships.");
-      }
+        const [sch, profile] = await Promise.all([
+          studentApi.getScholarships(),
+          studentApi.getProfile()
+        ]);
 
-      try {
-        const stuRes = await studentApi.getProfile();
-        const id = stuRes.data.content?.id ?? stuRes.data.id;
+        setAll(sch.data.map(x => x.content || x));
+        const student = profile.data.content ?? profile.data;
+        setMe(student);
 
-        const appRes = await studentApi.getMyApplications(id);
-        setApps(appRes.data.map((m) => m.content || m));
-      } catch (err) {
-        console.warn("Failed to load scholarship applications", err);
+        const appsRes = await studentApi.getMyApplications(student.id);
+        setApps(appsRes.data.map(x => x.content || x));
+      } catch (e) {
+        console.error(e);
+        toast.error("حدث خطأ في تحميل البيانات");
       } finally {
-        setLoading(false);
+        setLoad(false);
       }
     };
-
-    load();
+    bootstrap();
   }, []);
 
-  const ScholarshipCard = ({ s }) => (
-    <div
-      className="card"
-      onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-4px)")}
-      onMouseLeave={(e) => (e.currentTarget.style.transform = "none")}
-    >
-      <div className="card-header">{s.name}</div>
-      <div className="card-body">
-        <div className="card-row">
-          <span>Amount</span>
-          <span>${s.totalAmount?.toLocaleString()}</span>
-        </div>
-        <div className="card-row">
-          <span>Slots</span>
-          <span>{s.availableSlots}</span>
-        </div>
-        <div className="card-row">
-          <span>Region</span>
-          <span>{s.targetRegion || "-"}</span>
+  /* ───────── إرسال الطلب ───────── */
+  const submitApplication = async (scholarship, form) => {
+    const reason = form.reason.trim();
+    const life   = form.lifeCondition.trim();
+    if (!reason || !life) {
+      toast.error("يرجى تعبئة جميع الحقول"); return;
+    }
+
+    const payload = {
+      studentId     : me.id,
+      courseId      : scholarship.courseId,
+      scholarshipId : scholarship.id,
+      reason,
+      lifeCondition : life,
+      status        : "PENDING",   // قيمة ابتدائية اختيارية
+      amount        : null
+    };
+
+    try {
+      await studentApi.applyScholarship(payload);
+      toast.success("تم تقديم الطلب بنجاح ✅");
+
+      /* تحديث قائمة طلباتي */
+      const r = await studentApi.getMyApplications(me.id);
+      setApps(r.data.map(x => x.content || x));
+      setTab("my");
+      setApplyingId(null);
+    } catch (err) {
+      console.error(err);
+      toast.error("فشل إرسال الطلب");
+    }
+  };
+
+  /* ───────── بطاقة المنحة ───────── */
+  const ScholarshipCard = ({ s }) => {
+    const isOpen = applyingId === s.id;
+    const [form, setForm] = useState({ reason: "", lifeCondition: "" });
+
+    useEffect(() => { if (!isOpen) setForm({ reason: "", lifeCondition: "" }); }, [isOpen]);
+
+    return (
+      <div className="card">
+        <div className="card-header">{s.name}</div>
+
+        <div className="card-body">
+          <div className="card-row"><span>Amount</span><span>${s.totalAmount?.toLocaleString()}</span></div>
+          <div className="card-row"><span>Slots</span><span>{s.availableSlots}</span></div>
+          <div className="card-row"><span>Region</span><span>{s.targetRegion || "-"}</span></div>
+          <div className="card-row"><span>Course</span><span>{s.courseName || "-"}</span></div>
+
+          {isOpen ? (
+            <div className="application-form">
+              <h4>Apply for “{s.name}”</h4>
+
+              <label>Reason for Applying</label>
+              <textarea rows={4}
+                        value={form.reason}
+                        onChange={e => setForm({ ...form, reason: e.target.value })} />
+
+              <label>Life Condition</label>
+              <textarea rows={4}
+                        value={form.lifeCondition}
+                        onChange={e => setForm({ ...form, lifeCondition: e.target.value })} />
+
+              <div className="form-buttons">
+                <button className="apply-btn"
+                        disabled={!form.reason.trim() || !form.lifeCondition.trim()}
+                        onClick={() => submitApplication(s, form)}>
+                  Submit
+                </button>
+                <button className="cancel-btn" onClick={() => setApplyingId(null)}>Cancel</button>
+              </div>
+            </div>
+          ) : (
+            <button className="apply-btn"
+                    disabled={s.availableSlots === 0}
+                    onClick={() => setApplyingId(s.id)}>
+              Apply
+            </button>
+          )}
         </div>
       </div>
-    </div>
-  );
+    );
+  };
 
+  /* ───────── بطاقة الطلب ───────── */
   const ApplicationCard = ({ a }) => (
-    <div
-      className="card"
-      onMouseEnter={(e) => (e.currentTarget.style.transform = "translateY(-4px)")}
-      onMouseLeave={(e) => (e.currentTarget.style.transform = "none")}
-    >
+    <div className="card">
       <div className="card-header">{a.scholarshipName || `Scholarship #${a.scholarshipId}`}</div>
       <div className="card-body">
-        <div className="card-row">
-          <span>Requested</span>
-          <span>{a.amount ?? "-"}</span>
-        </div>
-        <div className="card-row">
-          <span>Status</span>
-          <span className={`status ${a.status}`}>{a.status}</span>
-        </div>
+        <div className="card-row"><span>Requested</span><span>{a.amount ?? "-"}</span></div>
+        <div className="card-row"><span>Status</span><span className={`status ${a.status}`}>{a.status}</span></div>
       </div>
     </div>
   );
 
-  const list = tab === "all" ? all : apps;
+  const data = tab === "all" ? all : apps;
 
   return (
     <div className="scholarships-page">
       <h2 className="page-title">Scholarships</h2>
 
       <div className="tabs">
-        <span className={`tab ${tab === "all" ? "active" : ""}`} onClick={() => setTab("all")}>
-          All Scholarships
-        </span>
-        <span className={`tab ${tab === "my" ? "active" : ""}`} onClick={() => setTab("my")}>
-          My Applications
-        </span>
+        <span className={`tab ${tab === "all" ? "active" : ""}`} onClick={() => setTab("all")}>All Scholarships</span>
+        <span className={`tab ${tab === "my"  ? "active" : ""}`} onClick={() => setTab("my")}>My Applications</span>
       </div>
 
       {loading ? (
-        <p>Loading...</p>
-      ) : list.length === 0 ? (
+        <p>Loading…</p>
+      ) : data.length === 0 ? (
         <p>{tab === "all" ? "No scholarships." : "No applications yet."}</p>
       ) : (
         <div className="card-grid">
           {tab === "all"
-            ? list.map((s) => <ScholarshipCard key={s.id} s={s} />)
-            : list.map((a) => <ApplicationCard key={a.id} a={a} />)}
+            ? data.map(s => <ScholarshipCard key={s.id} s={s} />)
+            : data.map(a => <ApplicationCard key={a.id} a={a} />)}
         </div>
       )}
     </div>

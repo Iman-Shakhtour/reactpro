@@ -93,27 +93,29 @@
   cursor: pointer;
   background: #E9DCAA;
   color: #5C4634;
-}
-
-/* === Responsive: Mobile View === */
-@media (max-width: 768px) {
+}@media (max-width: 768px) {
   .sidebar {
-    width: 0 !important;
-    padding: 0 !important;
+    width: 0;
+    padding: 0;
   }
 
-  /* ✅ Hide all inner content except toggle button */
-  .sidebar-logout,
-  .sidebar-card,
-  .sidebar-logo,
-  .sidebar-hello,
-  .sidebar-nav {
-    display: none !important;
+  .sidebar.open {
+    width: 250px;
+    padding: 12px;
   }
 
-  .sidebar-toggle {
-    display: flex !important;
-    justify-content: center;
-    padding-top: 20px;
+
+  /* ✅ هاي تخليهم يظهروا لما السايدبار مفتوحة */
+  .sidebar.open .sidebar-logout,
+  .sidebar.open .sidebar-card,
+  .sidebar.open .sidebar-logo,
+  .sidebar.open .sidebar-hello,
+  .sidebar.open .sidebar-nav {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .sidebar.open .sidebar-nav {
+    gap: 18px;
   }
 }

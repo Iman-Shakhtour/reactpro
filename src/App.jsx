@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Outlet } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import ScholarshipAppsPage from "./pages/admin/ScholarshipAppsPage";
 
 // Public
 import LandingPage from "./pages/LandingPage";
@@ -64,7 +65,7 @@ function App() {
               </ProtectedRoute>
             }
           >
-            <Route index element={<DashboardHome />} />
+            <Route index element={<SystemStatisticsPage />} />
             <Route path="manage-users" element={<ManageUsersPage />}>
               <Route path="add" element={<AddUserPage />} />
             </Route>
@@ -73,7 +74,13 @@ function App() {
               path="manage-scholarships"
               element={<ManageScholarshipsPage />}
             />
+            <Route
+              path="scholarship-applications"
+              element={<ScholarshipAppsPage />}
+            />
             <Route path="stats" element={<SystemStatisticsPage />} />
+
+
           </Route>
 
           {/* Student */}
@@ -88,10 +95,11 @@ function App() {
             {/* Dashboard كصفحة رئيسية */}
             <Route index element={<StudentDashboard />} />
             <Route path="courses" element={<MyCourses />} />
-            <Route path="profile" element={<MyProfile />} />
             <Route path="scholarships" element={<Scholarships />} />
             <Route path="assignments" element={<MyAssignments />} />
             <Route path="assignments/:id" element={<SolveAssignment />} />
+            <Route path="profile" element={<MyProfile />} />
+
             <Route path="settings" element={<Settings />} />
           </Route>
 

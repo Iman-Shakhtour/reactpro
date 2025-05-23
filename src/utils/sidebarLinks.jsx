@@ -8,6 +8,7 @@ import {
   HiOutlineCog6Tooth,
   HiOutlineHome,
 } from "react-icons/hi2";
+import { HiDocumentText } from "react-icons/hi2";
 
 import { FaUser, FaCog } from "react-icons/fa";
 
@@ -33,8 +34,17 @@ export const adminLinks = [
     label: "System Stats",
     icon: <HiOutlineChartBar size={18} />,
   },
+  {
+  to: "/dashboard/admin/scholarship-applications",
+  label: "Scholarship Applications",
+  icon: <HiOutlineClipboardDocumentList size={18} />,
+ 
+  
+    to: "/dashboard/admin/scholarship-applications",   // المسار الكامل
+    label: "Scholarship Applications",
+    icon: <HiDocumentText size={18} />,
+  },
 ];
-
 /* ---------- Student links ---------- */
 export const studentLinks = [
   {

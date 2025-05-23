@@ -1,187 +1,146 @@
-// src/pages/admin/ManageScholarshipsPage.js
 import React, { useEffect, useState, useMemo } from "react";
 import adminApi from "../../api/adminApi";
+import { toast } from "react-toastify";
 
 export default function ManageScholarshipsPage() {
+  /* ───────── state ───────── */
   const [scholarships, setScholarships] = useState([]);
   const [query, setQuery]               = useState("");
 
-  // modal state: "add", "edit", "assign-students", "assign-courses"
-  const [modalMode, setModalMode]       = useState(null);
-  const [activeId, setActiveId]         = useState(null);
+  const [modalMode, setModalMode]       = useState(null); // add|edit|assign-students|assign-courses|applications
+  const [activeId,  setActiveId]        = useState(null);
 
-  // form for add/edit
-  const [form, setForm] = useState({
-    name: "",
-    totalAmount: "",
-    slots: "",
-    region: ""
-  });
+  const [form, setForm] = useState({ name:"", totalAmount:"", slots:"", region:"" });
 
-  // data for assignments
   const [students, setStudents]         = useState([]);
-  const [courses, setCourses]           = useState([]);
+  const [courses , setCourses]          = useState([]);
   const [selectedStudents, setSelectedStudents] = useState([]);
-  const [selectedCourses, setSelectedCourses]   = useState([]);
+  const [selectedCourses , setSelectedCourses ] = useState([]);
 
-  // load scholarships, students, courses
+  const [applications, setApplications] = useState([]);   // for Applications modal
+
+  /* ───────── init ───────── */
   const loadAll = async () => {
-    // scholarships
-    const schRes = await adminApi.getScholarships();
-    const schList = Array.isArray(schRes.data)
-      ? schRes.data.map(item => item.content || item)
-      : [];
-    setScholarships(schList);
-
-    // students
-    const stRes = await adminApi.getStudents();
-    setStudents(Array.isArray(stRes.data) ? stRes.data : []);
-
-    // courses
-    const coRes = await adminApi.getCourses();
-    const coList = Array.isArray(coRes.data)
-      ? coRes.data.map(item => item.content || item)
-      : [];
-    setCourses(coList);
+    const sch = await adminApi.getScholarships();
+    const st  = await adminApi.getStudents();
+    const co  = await adminApi.getCourses();
+    setScholarships(sch.data.map(o=>o.content||o));
+    setStudents(st.data);
+    setCourses(co.data.map(o=>o.content||o));
   };
+  useEffect(() => { loadAll(); }, []);
 
-  useEffect(() => {
-    loadAll();
-  }, []);
-
-  // filtered scholarships by name or amount
-  const filtered = useMemo(() => {
-    if (!query.trim()) return scholarships;
-    const q = query.toLowerCase();
+  /* ───────── filtering ───── */
+  const filtered = useMemo(()=>{
+    const q=query.toLowerCase();
     return scholarships.filter(s =>
-      (s.name           || "").toLowerCase().includes(q) ||
-      String(s.totalAmount).includes(q)
+      (s.name||"").toLowerCase().includes(q) ||
+      String(s.totalAmount||"").includes(q)
     );
-  }, [scholarships, query]);
+  },[scholarships,query]);
 
-  // open add/edit modal
-  const openAddEdit = (mode, sch = null) => {
-    setModalMode(mode);
-    if (mode === "edit" && sch) {
-      setActiveId(sch.id);
-      setForm({
-        name:        sch.name,
-        totalAmount: sch.totalAmount,
-        slots:       sch.availableSlots,
-        region:      sch.targetRegion
-      });
-    } else {
-      setActiveId(null);
-      setForm({ name: "", totalAmount: "", slots: "", region: "" });
-    }
-  };
-
-  // open assign modal
-  const openAssign = (mode, sch) => {
-    setModalMode(mode);
+  /* ───────── CRUD handlers ─ */
+  const openAdd = () => { setForm({name:"",totalAmount:"",slots:"",region:""}); setModalMode("add"); };
+  const openEdit = sch  => {
     setActiveId(sch.id);
-    if (mode === "assign-students") {
-      setSelectedStudents(sch.assignedStudentIds || []);
-    } else {
-      setSelectedCourses(sch.assignedCourseIds || []);
-    }
+    setForm({
+      name: sch.name,
+      totalAmount: sch.totalAmount,
+      slots: sch.availableSlots,
+      region: sch.targetRegion
+    });
+    setModalMode("edit");
   };
 
-  // save add/edit
-  const handleSave = async () => {
+  const saveAddEdit = async () => {
     const payload = {
-      name:           form.name,
-      totalAmount:    parseFloat(form.totalAmount) || 0,
-      availableSlots: parseInt(form.slots, 10)      || 0,
-      targetRegion:   form.region
+      name:form.name,
+      totalAmount:+form.totalAmount,
+      availableSlots:+form.slots,
+      targetRegion:form.region
     };
-    if (modalMode === "add") {
-      await adminApi.createScholarship(payload);
-    } else {
-      await adminApi.updateScholarship(activeId, payload);
-    }
-    await loadAll();
-    setModalMode(null);
+    try{
+      modalMode==="add"
+        ? await adminApi.createScholarship(payload)
+        : await adminApi.updateScholarship(activeId,payload);
+      toast.success("Saved!");
+      setModalMode(null); await loadAll();
+    }catch{ toast.error("Failed"); }
   };
 
-  // delete scholarship
-  const handleDelete = async id => {
-    if (!window.confirm("تأكيد حذف المنحة؟")) return;
-    await adminApi.deleteScholarship(id);
-    await loadAll();
+  const deleteScholarship = async id => {
+    if(!window.confirm("Delete scholarship?")) return;
+    await adminApi.deleteScholarship(id); await loadAll();
   };
 
-  // assign students
-  const handleAssignStudents = async () => {
-    await adminApi.assignStudentsToScholarship(activeId, selectedStudents);
-    await loadAll();
-    setModalMode(null);
+  /* ───────── assign ───────── */
+  const openAssign = (mode,sch) => {
+    setActiveId(sch.id);
+    if(mode==="assign-students") setSelectedStudents(sch.assignedStudentIds||[]);
+    else                          setSelectedCourses (sch.assignedCourseIds ||[]);
+    setModalMode(mode);
+  };
+  const submitAssignStudents = async () => {
+    await adminApi.assignStudentsToScholarship(activeId,selectedStudents);
+    setModalMode(null); await loadAll();
+  };
+  const submitAssignCourses  = async () => {
+    await adminApi.assignCoursesToScholarship(activeId,selectedCourses);
+    setModalMode(null); await loadAll();
   };
 
-  // assign courses
-  const handleAssignCourses = async () => {
-    await adminApi.assignCoursesToScholarship(activeId, selectedCourses);
-    await loadAll();
-    setModalMode(null);
+  /* ───────── applications ─── */
+  const openApplications = async sch => {
+    setActiveId(sch.id);
+    const res = await adminApi.getAllApplications();
+    const apps = res.data.map(o=>o.content||o).filter(a=>a.scholarshipId===sch.id);
+    setApplications(apps); setModalMode("applications");
+  };
+  const actOnApp = async (id,action) => {
+    try{
+      await (action==="approve"
+        ? adminApi.approveApplication(id)
+        : adminApi.rejectApplication(id));
+      setApplications(applications.map(a=>a.id===id?{...a,status:action.toUpperCase()}:a));
+      toast.success(`${action}d`);
+    }catch{ toast.error("Failed"); }
   };
 
+  /* ───────── UI ──────────── */
   return (
     <section style={S.wrapper}>
       <h2 style={S.header}>🎓 Manage Scholarships</h2>
 
       <div style={S.topRow}>
-        <input
-          placeholder="🔍 Search…"
-          value={query}
-          onChange={e => setQuery(e.target.value)}
-          style={S.search}
-        />
-        <button style={S.btn} onClick={() => openAddEdit("add")}>
-          Add Scholarship
-        </button>
+        <input style={S.search} placeholder="🔍 Search…" value={query} onChange={e=>setQuery(e.target.value)}/>
+        <button style={S.btn} onClick={openAdd}>Add Scholarship</button>
       </div>
 
       <table style={S.table}>
         <thead>
           <tr>
-            <th style={S.th}>Name</th>
-            <th style={S.th}>Total Amount</th>
-            <th style={S.th}>Slots</th>
-            <th style={S.th}>Region</th>
-            <th style={S.th}>Assigned Students</th>
-            <th style={S.th}>Assigned Courses</th>
-            <th style={{ ...S.th, ...S.actions }}>Actions</th>
+            <th style={S.th}>Name</th><th style={S.th}>Total Amount</th>
+            <th style={S.th}>Slots</th><th style={S.th}>Region</th>
+            <th style={S.th}>Students</th><th style={S.th}>Courses</th>
+            <th style={{...S.th,...S.actions}}>Actions</th>
           </tr>
         </thead>
         <tbody>
-          {filtered.map(s => (
+          {filtered.map(s=>(
             <tr key={s.id}>
               <td style={S.td}>{s.name}</td>
               <td style={S.td}>{s.totalAmount}</td>
               <td style={S.td}>{s.availableSlots}</td>
               <td style={S.td}>{s.targetRegion}</td>
-              <td style={S.td}>{(s.assignedStudentIds || []).length}</td>
-              <td style={S.td}>{(s.assignedCourseIds  || []).length}</td>
+              <td style={S.td}>{(s.assignedStudentIds||[]).length}</td>
+              <td style={S.td}>{(s.assignedCourseIds ||[]).length}</td>
               <td style={S.td}>
                 <div style={S.actionGrid}>
-                  <button style={S.btn} onClick={() => openAddEdit("edit", s)}>
-                    Edit
-                  </button>
-                  <button style={S.btnRed} onClick={() => handleDelete(s.id)}>
-                    Delete
-                  </button>
-                  <button
-                    style={S.btn}
-                    onClick={() => openAssign("assign-students", s)}
-                  >
-                    Assign Students
-                  </button>
-                  <button
-                    style={S.btn}
-                    onClick={() => openAssign("assign-courses", s)}
-                  >
-                    Assign Courses
-                  </button>
+                  <button style={S.btn}    onClick={()=>openEdit(s)}>Edit</button>
+                  <button style={S.btnRed} onClick={()=>deleteScholarship(s.id)}>Delete</button>
+                  <button style={S.btn}    onClick={()=>openAssign("assign-students",s)}>Assign Students</button>
+                  <button style={S.btn}    onClick={()=>openAssign("assign-courses",s)}>Assign Courses</button>
+                  <button style={S.btnGreen} onClick={()=>openApplications(s)}>Applications</button>
                 </div>
               </td>
             </tr>
@@ -189,127 +148,94 @@ export default function ManageScholarshipsPage() {
         </tbody>
       </table>
 
+      {/* ───────── Modal ───────── */}
       {modalMode && (
         <div style={S.modalOverlay}>
           <div style={S.modal}>
-            {/* Add / Edit Scholarship */}
-            {(modalMode === "add" || modalMode === "edit") && (
+            {/* add / edit */}
+            {(modalMode==="add"||modalMode==="edit") && (
               <>
-                <h3>{modalMode === "add" ? "Add" : "Edit"} Scholarship</h3>
-                <input
-                  placeholder="Name"
-                  value={form.name}
-                  onChange={e =>
-                    setForm(f => ({ ...f, name: e.target.value }))
-                  }
-                  style={S.input}
-                />
-                <input
-                  placeholder="Total Amount"
-                  type="number"
-                  value={form.totalAmount}
-                  onChange={e =>
-                    setForm(f => ({ ...f, totalAmount: e.target.value }))
-                  }
-                  style={S.input}
-                />
-                <input
-                  placeholder="Slots"
-                  type="number"
-                  value={form.slots}
-                  onChange={e =>
-                    setForm(f => ({ ...f, slots: e.target.value }))
-                  }
-                  style={S.input}
-                />
-                <input
-                  placeholder="Region"
-                  value={form.region}
-                  onChange={e =>
-                    setForm(f => ({ ...f, region: e.target.value }))
-                  }
-                  style={S.input}
-                />
+                <h3>{modalMode==="add"?"Add":"Edit"} Scholarship</h3>
+                {["name","totalAmount","slots","region"].map(k=>(
+                  <input key={k} style={S.input} placeholder={k}
+                         value={form[k]} onChange={e=>setForm({...form,[k]:e.target.value})}/>
+                ))}
                 <div style={S.modalActions}>
-                  <button style={S.btn} onClick={handleSave}>
-                    Save
-                  </button>
-                  <button
-                    style={{ ...S.btn, background: "#ccc", color: "#333" }}
-                    onClick={() => setModalMode(null)}
-                  >
-                    Cancel
-                  </button>
+                  <button style={S.btn} onClick={saveAddEdit}>Save</button>
+                  <button style={S.btnGray} onClick={()=>setModalMode(null)}>Cancel</button>
                 </div>
               </>
             )}
 
-            {/* Assign Students */}
-            {modalMode === "assign-students" && (
+            {/* assign students */}
+            {modalMode==="assign-students" && (
               <>
                 <h3>Assign Students</h3>
-                <div style={S.listContainer}>
-                  {students.map(st => (
-                    <label key={st.id} style={S.checkboxLabel}>
-                      <input
-                        type="checkbox"
-                        checked={selectedStudents.includes(st.id)}
-                        onChange={e => {
-                          const next = e.target.checked
-                            ? [...selectedStudents, st.id]
-                            : selectedStudents.filter(x => x !== st.id);
-                          setSelectedStudents(next);
-                        }}
-                      />
-                      {" " + st.fullName}
-                    </label>
-                  ))}
-                </div>
+                <div style={S.list}>{students.map(st=>(
+                  <label key={st.id} style={S.label}>
+                    <input type="checkbox" checked={selectedStudents.includes(st.id)}
+                           onChange={e=>{
+                             const next=e.target.checked
+                               ? [...selectedStudents,st.id]
+                               : selectedStudents.filter(x=>x!==st.id);
+                             setSelectedStudents(next);
+                           }}/> {st.fullName}
+                  </label>
+                ))}</div>
                 <div style={S.modalActions}>
-                  <button style={S.btn} onClick={handleAssignStudents}>
-                    Assign
-                  </button>
-                  <button
-                    style={{ ...S.btn, background: "#ccc", color: "#333" }}
-                    onClick={() => setModalMode(null)}
-                  >
-                    Cancel
-                  </button>
+                  <button style={S.btn} onClick={submitAssignStudents}>Assign</button>
+                  <button style={S.btnGray} onClick={()=>setModalMode(null)}>Cancel</button>
                 </div>
               </>
             )}
 
-            {/* Assign Courses */}
-            {modalMode === "assign-courses" && (
+            {/* assign courses */}
+            {modalMode==="assign-courses" && (
               <>
                 <h3>Assign Courses</h3>
-                <div style={S.listContainer}>
-                  {courses.map(c => (
-                    <label key={c.id} style={S.checkboxLabel}>
-                      <input
-                        type="checkbox"
-                        checked={selectedCourses.includes(c.id)}
-                        onChange={e => {
-                          const next = e.target.checked
-                            ? [...selectedCourses, c.id]
-                            : selectedCourses.filter(x => x !== c.id);
-                          setSelectedCourses(next);
-                        }}
-                      />
-                      {" " + c.title}
-                    </label>
-                  ))}
-                </div>
+                <div style={S.list}>{courses.map(c=>(
+                  <label key={c.id} style={S.label}>
+                    <input type="checkbox" checked={selectedCourses.includes(c.id)}
+                           onChange={e=>{
+                             const next=e.target.checked
+                               ? [...selectedCourses,c.id]
+                               : selectedCourses.filter(x=>x!==c.id);
+                             setSelectedCourses(next);
+                           }}/> {c.title}
+                  </label>
+                ))}</div>
                 <div style={S.modalActions}>
-                  <button style={S.btn} onClick={handleAssignCourses}>
-                    Assign
-                  </button>
-                  <button
-                    style={{ ...S.btn, background: "#ccc", color: "#333" }}
-                    onClick={() => setModalMode(null)}
-                  >
-                    Cancel
-                  </button>
+                  <button style={S.btn} onClick={submitAssignCourses}>Assign</button>
+                  <button style={S.btnGray} onClick={()=>setModalMode(null)}>Cancel</button>
+                </div>
+              </>
+            )}
+
+            {/* applications */}
+            {modalMode==="applications" && (
+              <>
+                <h3>Applications ({applications.length})</h3>
+                {applications.length===0
+                  ? <p>No applications.</p>
+                  : <table style={{...S.table,fontSize:14}}>
+                      <thead><tr><th style={S.th}>Student</th><th style={S.th}>Status</th><th style={S.th}>Actions</th></tr></thead>
+                      <tbody>{applications.map(a=>(
+                        <tr key={a.id}>
+                          <td style={S.td}>{a.studentId}</td>
+                          <td style={S.td}>{a.status}</td>
+                          <td style={S.td}>
+                            <button style={S.btn}
+                              disabled={a.status!=="PENDING"}
+                              onClick={()=>actOnApp(a.id,"approve")}>Approve</button>{" "}
+                            <button style={S.btnRed}
+                              disabled={a.status!=="PENDING"}
+                              onClick={()=>actOnApp(a.id,"reject")}>Reject</button>
+                          </td>
+                        </tr>
+                      ))}</tbody>
+                    </table>}
+                <div style={S.modalActions}>
+                  <button style={S.btnGray} onClick={()=>setModalMode(null)}>Close</button>
                 </div>
               </>
             )}
@@ -320,28 +246,25 @@ export default function ManageScholarshipsPage() {
   );
 }
 
+/* ───────── styles ───────── */
 const S = {
-  wrapper:      { padding: 30, background: "#fff", borderRadius: 12, boxShadow: "0 4px 18px rgba(0,0,0,.07)" },
-  header:       { marginTop: 0 },
-  topRow:       { display: "flex", gap: 10, margin: "18px 0", alignItems: "center" },
-  search:       { flex: 1, padding: 10, borderRadius: 8, border: "1px solid #d0d6dd" },
-  btn:          { padding: "8px 18px", background: "#004aad", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 500 },
-  btnRed:       { padding: "8px 18px", background: "#ff4d4f", color: "#fff", border: "none", borderRadius: 6, cursor: "pointer", fontWeight: 500 },
-  table:        { width: "100%", borderCollapse: "collapse" },
-  th:           { textAlign: "left", padding: "14px 16px", fontWeight: 600, background: "#f2f6fa", borderBottom: "1px solid #e3e8ee" },
-  td:           { padding: "14px 16px", borderBottom: "1px solid #eff2f6", verticalAlign: "top" },
-  actions:      { textAlign: "right" },
-  actionGrid:   {
-    display:           "grid",
-    gridTemplateColumns: "repeat(2, auto)",
-    gap:               "8px 12px",
-    justifyContent:    "flex-end",
-    alignItems:        "center"
-  },
-  modalOverlay: { position: "fixed", inset: 0, background: "rgba(0,0,0,0.3)", display: "flex", alignItems: "center", justifyContent: "center" },
-  modal:        { background: "#fff", padding: 24, borderRadius: 12, width: 400, maxHeight: "80%", overflowY: "auto" },
-  input:        { width: "100%", padding: 8, margin: "8px 0", border: "1px solid #ccc", borderRadius: 6 },
-  modalActions: { marginTop: 16, textAlign: "right" },
-  listContainer:{ maxHeight: 300, overflowY: "auto", margin: "12px 0", padding: "0 4px" },
-  checkboxLabel:{ display: "block", margin: "4px 0", cursor: "pointer" }
+  wrapper:{padding:30,background:"#fff",borderRadius:12,boxShadow:"0 4px 18px rgba(0,0,0,.07)"},
+  header:{marginTop:0},
+  topRow:{display:"flex",gap:10,margin:"18px 0",alignItems:"center"},
+  search:{flex:1,padding:10,borderRadius:8,border:"1px solid #d0d6dd"},
+  table:{width:"100%",borderCollapse:"collapse"},
+  th:{textAlign:"left",padding:"14px 16px",fontWeight:600,background:"#f2f6fa",borderBottom:"1px solid #e3e8ee"},
+  td:{padding:"14px 16px",borderBottom:"1px solid #eff2f6"},
+  actions:{textAlign:"right"},
+  actionGrid:{display:"grid",gridTemplateColumns:"repeat(3,auto)",gap:"8px 10px",justifyContent:"flex-end"},
+  btn:{padding:"6px 14px",background:"#004aad",color:"#fff",border:"none",borderRadius:6,cursor:"pointer",fontSize:13},
+  btnRed:{padding:"6px 14px",background:"#ff4d4f",color:"#fff",border:"none",borderRadius:6,cursor:"pointer",fontSize:13},
+  btnGreen:{padding:"6px 14px",background:"#10b981",color:"#fff",border:"none",borderRadius:6,cursor:"pointer",fontSize:13},
+  btnGray:{padding:"6px 14px",background:"#ccc",color:"#333",border:"none",borderRadius:6,cursor:"pointer",fontSize:13},
+  modalOverlay:{position:"fixed",inset:0,background:"rgba(0,0,0,.35)",display:"flex",alignItems:"center",justifyContent:"center"},
+  modal:{background:"#fff",padding:24,borderRadius:12,width:500,maxHeight:"80%",overflowY:"auto"},
+  input:{width:"100%",padding:10,margin:"8px 0",borderRadius:6,border:"1px solid #ccc"},
+  modalActions:{marginTop:16,textAlign:"right"},
+  list:{maxHeight:320,overflowY:"auto",margin:"12px 0"},
+  label:{display:"block",margin:"6px 0"}
 };

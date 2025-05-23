@@ -1,12 +1,12 @@
-
+// src/api/adminApi.js
 import axiosInstance from "./axiosInstance";
 
 const adminApi = {
-  // ─── Dashboard ────────────────────────────────────
+  // ─── Dashboard ──────────────────────────────
   getDashboardStats: () =>
     axiosInstance.get("/api/admin/dashboard/stats"),
 
-  // ─── Courses ──────────────────────────────────────
+  // ─── Courses ────────────────────────────────
   getCourses: () =>
     axiosInstance.get("/api/courses"),
   createCourse: data =>
@@ -16,7 +16,7 @@ const adminApi = {
   deleteCourse: id =>
     axiosInstance.delete(`/api/courses/${id}`),
 
-  // ─── Scholarships ─────────────────────────────────
+  // ─── Scholarships ───────────────────────────
   getScholarships: () =>
     axiosInstance.get("/api/scholarships"),
   createScholarship: data =>
@@ -26,17 +26,19 @@ const adminApi = {
   deleteScholarship: id =>
     axiosInstance.delete(`/api/scholarships/${id}`),
   assignStudentsToScholarship: (scholarshipId, studentIds) =>
-    axiosInstance.put(
-      `/api/scholarships/${scholarshipId}/students`,
-      studentIds
-    ),
+    axiosInstance.put(`/api/scholarships/${scholarshipId}/students`, studentIds),
   assignCoursesToScholarship: (scholarshipId, courseIds) =>
-    axiosInstance.put(
-      `/api/scholarships/${scholarshipId}/courses`,
-      courseIds
-    ),
+    axiosInstance.put(`/api/scholarships/${scholarshipId}/courses`, courseIds),
 
-  // ─── Admin Users ──────────────────────────────────
+  // ─── Applications ───────────────────────────
+  getAllApplications: () =>
+    axiosInstance.get("/api/scholarship-applications"),
+  approveApplication: id =>
+    axiosInstance.put(`/api/scholarship-applications/${id}/approve`),
+  rejectApplication: id =>
+    axiosInstance.put(`/api/scholarship-applications/${id}/reject`),
+
+  // ─── Admin Users ────────────────────────────
   getAdmins: () =>
     axiosInstance.get("/api/admins"),
   createAdmin: data =>
@@ -46,7 +48,7 @@ const adminApi = {
   deleteAdmin: id =>
     axiosInstance.delete(`/api/admins/${id}`),
 
-  // ─── Students ────────────────────────────────────
+  // ─── Students ───────────────────────────────
   getStudents: () =>
     axiosInstance.get("/api/admins/students"),
   updateStudent: (id, data) =>
@@ -54,7 +56,7 @@ const adminApi = {
   deleteStudent: id =>
     axiosInstance.delete(`/api/admins/students/${id}`),
 
-  // ─── Instructors ─────────────────────────────────
+  // ─── Instructors ────────────────────────────
   getInstructors: () =>
     axiosInstance.get("/api/admins/instructors"),
   createInstructor: data =>
@@ -64,7 +66,7 @@ const adminApi = {
   deleteInstructor: id =>
     axiosInstance.delete(`/api/admins/instructors/${id}`),
 
-  // ─── Donors ──────────────────────────────────────
+  // ─── Donors ─────────────────────────────────
   getDonors: () =>
     axiosInstance.get("/api/admins/donors"),
   deleteDonor: id =>
