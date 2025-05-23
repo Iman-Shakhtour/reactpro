@@ -5,6 +5,8 @@ import NotificationBell from "./NotificationBell";
 import { adminLinks, studentLinks, instructorLinks } from "../utils/sidebarLinks";
 import Footer from "./Footer";
 import Navbar from "./Navbar";
+import "bootstrap/dist/css/bootstrap.min.css";
+
 const Layout = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -32,63 +34,42 @@ const Layout = () => {
 
   return (
     <>
-      {/* ✅ جرس الإشعارات */}
-      <div style={floatingBellStyle}>
+      {/* 🔔 جرس الإشعارات */}
+<div className="position-fixed top-0 end-0 p-3" style={{ zIndex: 1050 }}>
         <NotificationBell />
       </div>
 
- <Navbar /> {/* ⬅️ render the navbar */}
-    <div style={{ display: "flex" }}>
-      <Sidebar
-        links={links}
-        title="Hayat"
-        username={username}
-        onLogout={onLogout}
-      />
-      ...
+      <Navbar />
+
+<div
+  className="d-flex"
+  style={{ height: "calc(100vh - 56px)", marginTop: "56px" }}
+>
+  {/* ✅ Sidebar مساحة ثابتة */}
+  <div className="bg-light" style={{ width: "250px", minWidth: "250px", borderRight: "none" }}>
+    <Sidebar
+      links={links}
+      title="Hayat"
+      username={username}
+      onLogout={onLogout}
+    />
+  </div>
+
+        {/* ✅ Main content مع scroll */}
+ <div
+    className="flex-grow-1 d-flex flex-column"
+    style={{ paddingInlineStart: "40px" }} // ✅ هنا التعديل
+  >
+      <main className="flex-grow-1 p-4" style={{ overflowY: "auto", background: "#F9F9F6" }}>
+        <Outlet />
+      </main>
+      <Footer />
     </div>
-    
-      <div style={{ display: "flex" }}>
-        <Sidebar
-          links={links}
-          title="Hayat"
-          username={username}
-          onLogout={onLogout}
-        />
-
-        {/* ✅ هذا هو التعديل المهم */}
-        <div style={contentWrapper}>
-          <main style={mainStyle}>
-            <Outlet />
-          </main>
-          <Footer />
-        </div>
-      </div>
-    </>
-  );
-};
-
-/* ---------- STYLES ---------- */
-const floatingBellStyle = {
-  position: "fixed",
-  top: 16,
-  right: 24,
-  zIndex: 1000,
-};
-
-const contentWrapper = {
-  flex: 1,
-  display: "flex",
-  flexDirection: "column",
-  height: "100vh", // ✅ ضروري عشان الفوتر ينزل تحت
-};
-
-const mainStyle = {
-  flex: 1, // ✅ يخلي المحتوى يتمدد والباقي للفوتر
-  padding: "80px 350px 40px", // ✅ أضفنا margin من الأعلى
-  background: "#F9F9F6",
-  overflowY: "auto",
-  overflowX: "hidden",
+  </div>
+</>
+);
 };
 
 export default Layout;
+
+    
