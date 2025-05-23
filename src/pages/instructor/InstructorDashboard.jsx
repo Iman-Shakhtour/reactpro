@@ -40,8 +40,8 @@ export default function InstructorDashboard() {
         const me = unwrap((await axiosInstance.get("/api/instructors/me")).data);
 
         /* 2) مقرّراتي */
-        const allCourses = (await axiosInstance.get("/api/courses")).data.map(unwrap)
-                           .filter(c => c.instructorId === me.id);
+  const allCourses = (await axiosInstance.get(`/api/courses/instructor/${me.id}`)).data.map(unwrap);
+
         setCourses(allCourses);
 
         /* 3) واجباتي */
