@@ -1,5 +1,5 @@
 // src/pages/student/StudentDashboard.jsx
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import Calendar from "react-calendar";
 import {
   BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip,
@@ -8,6 +8,7 @@ import {
 import {
   FaBookOpen, FaClipboardCheck, FaGraduationCap, FaQuoteLeft
 } from "react-icons/fa";
+import { useTranslation } from "react-i18next";
 import "react-calendar/dist/Calendar.css";
 import axiosInstance from "../../api/axiosInstance";
 import "./StudentDashboard.css";
@@ -15,22 +16,22 @@ import "./StudentDashboard.css";
 /* ---------------- helpers ---------------- */
 const COLORS = ["#3b82f6", "#10b981", "#f97316", "#ef4444"];
 const unwrap = (m) => m.content ?? m;
-const QUOTES = [
-  "The expert in anything was once a beginner.",
-  "Learning never exhausts the mind – Leonardo da Vinci.",
-  "Success is the sum of small efforts repeated daily.",
-  "Education is the passport to the future.",
-  "Believe you can and you're halfway there."
-];
-const randQuote = () => QUOTES[Math.floor(Math.random() * QUOTES.length)];
 
 export default function StudentDashboard() {
+  const { t, i18n } = useTranslation();
+
   /* ------------- state ------------- */
   const [student, setStudent] = useState({});
   const [courses, setCourses] = useState([]);
   const [assigns, setAssigns] = useState([]);
   const [apps,    setApps]    = useState([]);
-  const [quote,   setQuote]   = useState(randQuote);
+  const [quote,   setQuote]   = useState("");
+
+  /* ------------- helpers ------------- */
+  const pickRandomQuote = useCallback(() => {
+    const quotes = t("quotes", { returnObjects: true });
+    return quotes[Math.floor(Math.random() * quotes.length)];
+  }, [t]);
 
   /* ------------- fetch ------------- */
   useEffect(() => {
@@ -50,38 +51,45 @@ export default function StudentDashboard() {
     })().catch(console.error);
   }, []);
 
+  /* ------------- quote refresh when language changes ------------- */
+  useEffect(() => {
+    setQuote(pickRandomQuote());
+  }, [pickRandomQuote, i18n.language]);
+
   /* ------------- derived ------------- */
   const done     = assigns.filter(a => a.status === "DONE").length;
   const pending  = assigns.length - done;
-  const barData  = [{ name:"Completed", value: done },
-                    { name:"Pending",   value: pending }];
+  const barData  = [
+    { name: t("completed"), value: done },
+    { name: t("pending"),   value: pending }
+  ];
   const pieData  = [
-    { name:"Courses",      value: courses.length,   color: COLORS[0] },
-    { name:"Scholarships", value: apps.length,      color: COLORS[2] },
-    { name:"Assignments",  value: assigns.length,   color: COLORS[1] }
+    { name: t("courses"),      value: courses.length,   color: COLORS[0] },
+    { name: t("scholarships"), value: apps.length,      color: COLORS[2] },
+    { name: t("assignments"),  value: assigns.length,   color: COLORS[1] }
   ];
 
   /* ------------- UI ------------- */
   return (
     <div className="dash-wrapper">
       <h1 className="dash-title">
-        Welcome, {student.fullName?.split(" ")[0] || "Student"} 
+        {t("welcome", { name: student.fullName?.split(" ")[0] || "" })}
       </h1>
 
       {/* quick stats */}
       <div className="stats-grid">
         <StatCard color={COLORS[0]} icon={<FaBookOpen />}
-                  label="Courses" value={courses.length}/>
+                  label={t("courses")} value={courses.length}/>
         <StatCard color={COLORS[1]} icon={<FaClipboardCheck />}
-                  label="Assignments" value={assigns.length}/>
+                  label={t("assignments")} value={assigns.length}/>
         <StatCard color={COLORS[2]} icon={<FaGraduationCap />}
-                  label="Scholarships" value={apps.length}/>
+                  label={t("scholarships")} value={apps.length}/>
       </div>
 
       {/* charts */}
       <div className="two-col">
         <section className="panel">
-          <h3>Assignments Progress</h3>
+          <h3>{t("assignments_progress")}</h3>
           <ResponsiveContainer width="100%" height={230}>
             <BarChart data={barData}>
               <CartesianGrid strokeDasharray="3 3"/>
@@ -96,7 +104,7 @@ export default function StudentDashboard() {
         </section>
 
         <section className="panel">
-          <h3>My Overview</h3>
+          <h3>{t("my_overview")}</h3>
           <ResponsiveContainer width="100%" height={230}>
             <PieChart>
               <Pie data={pieData} dataKey="value" innerRadius={45}
@@ -115,7 +123,7 @@ export default function StudentDashboard() {
       {/* calendar + motivation */}
       <section className="panel flex-box">
         <div style={{flex:1}}>
-          <h3>Calendar</h3>
+          <h3>{t("calendar")}</h3>
           <Calendar
             tileClassName={({date}) =>
               assigns.some(a => a.dueDate &&
@@ -123,12 +131,14 @@ export default function StudentDashboard() {
                ? "due-day" : ""
             }
           />
-          <small className="legend">
-            • highlighted days have assignment deadlines
-          </small>
+          <small className="legend">{t("highlighted_note")}</small>
         </div>
 
-        <MotivationCard quote={quote} onNew={()=>setQuote(randQuote())}/>
+        <MotivationCard
+          quote={quote}
+          onNew={() => setQuote(pickRandomQuote())}
+          t={t}
+        />
       </section>
     </div>
   );
@@ -147,12 +157,14 @@ function StatCard({ icon, label, value, color }) {
   );
 }
 
-function MotivationCard({ quote, onNew }) {
+function MotivationCard({ quote, onNew, t }) {
   return (
     <div className="motive-card">
       <FaQuoteLeft className="motive-icon"/>
       <p className="motive-text">“{quote}”</p>
-      <button className="motive-btn" onClick={onNew}>New quote</button>
+      <button className="motive-btn" onClick={onNew}>
+        {t("new_quote")}
+      </button>
     </div>
   );
 }
