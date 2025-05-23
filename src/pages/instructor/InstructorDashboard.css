@@ -62,3 +62,122 @@
   font-size: 14px;
   color: #444;
 }
+/* حاوية عامّة */
+.instructor-wrapper {
+  padding: 24px;
+  background: #f7fafc;
+  min-height: 100vh;
+}
+
+/* عنوان رئيسي */
+.title {
+  margin-top: 0;
+  margin-bottom: 22px;
+  font-size: 28px;
+}
+
+/* شبكة الإحصاءات الصغيرة */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 18px;
+  margin-bottom: 28px;
+}
+
+.stat-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 18px;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+.stat-card .icon {
+  font-size: 28px;
+  color: #3b82f6;
+}
+
+.stat-card .value {
+  font-size: 24px;
+  font-weight: 600;
+}
+
+.stat-card .label {
+  color: #6b7280;
+  font-size: 14px;
+}
+
+/* لوحات (panel) موحّدة */
+.panel {
+  background: #ffffff;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  margin-bottom: 28px;
+}
+
+/* عمودان جنب بعض (chart + inspiration) */
+.two-col {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+}
+
+@media (max-width: 900px) {
+  .two-col {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* بطاقة الإلهام */
+.inspiration p {
+  margin: 12px 0 0;
+  line-height: 1.6;
+  font-style: italic;
+}
+
+/* Calendar custom */
+.react-calendar {
+  border: none;
+  width: 100%;
+}
+.due-day {
+  background: #fde68a !important;
+  border-radius: 50% !important;
+}
+.legend {
+  color: #6b7280;
+  font-size: 12px;
+  margin-top: 6px;
+}
+
+/* قسم المقررات */
+.courses-section h3 {
+  margin-bottom: 14px;
+}
+
+.course-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 16px;
+}
+
+.course-card {
+  display: block;
+  padding: 16px;
+  background: #e0f2fe;
+  border-radius: 10px;
+  text-decoration: none;
+  color: #1e293b;
+  transition: transform 0.15s;
+}
+.course-card:hover {
+  transform: translateY(-3px);
+}
+
+.status {
+  color: #64748b;
+  font-style: italic;
+}

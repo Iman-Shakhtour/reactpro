@@ -1,96 +1,158 @@
+// src/pages/student/StudentDashboard.jsx
 import React, { useEffect, useState } from "react";
+import Calendar from "react-calendar";
+import {
+  BarChart, Bar, CartesianGrid, XAxis, YAxis, Tooltip,
+  ResponsiveContainer, PieChart, Pie, Cell, Legend
+} from "recharts";
+import {
+  FaBookOpen, FaClipboardCheck, FaGraduationCap, FaQuoteLeft
+} from "react-icons/fa";
+import "react-calendar/dist/Calendar.css";
 import axiosInstance from "../../api/axiosInstance";
 import "./StudentDashboard.css";
 
-const StudentDashboard = () => {
+/* ---------------- helpers ---------------- */
+const COLORS = ["#3b82f6", "#10b981", "#f97316", "#ef4444"];
+const unwrap = (m) => m.content ?? m;
+const QUOTES = [
+  "The expert in anything was once a beginner.",
+  "Learning never exhausts the mind – Leonardo da Vinci.",
+  "Success is the sum of small efforts repeated daily.",
+  "Education is the passport to the future.",
+  "Believe you can and you're halfway there."
+];
+const randQuote = () => QUOTES[Math.floor(Math.random() * QUOTES.length)];
+
+export default function StudentDashboard() {
+  /* ------------- state ------------- */
   const [student, setStudent] = useState({});
-  const [coursesCount, setCoursesCount] = useState(0);
-  const [assignmentsCount, setAssignmentsCount] = useState(0);
-  const [scholarshipsCount, setScholarshipsCount] = useState(0); // ✅ جديد
+  const [courses, setCourses] = useState([]);
+  const [assigns, setAssigns] = useState([]);
+  const [apps,    setApps]    = useState([]);
+  const [quote,   setQuote]   = useState(randQuote);
 
+  /* ------------- fetch ------------- */
   useEffect(() => {
-    // 1) جلب بيانات الطالب نفسه + تحديث صورة البروفايل في Sidebar
-    axiosInstance
-      .get("/api/students/me")
-      .then((res) => {
-        const data = res.data.content ?? res.data;
-        setStudent(data);
+    (async () => {
+      const me = unwrap((await axiosInstance.get("/api/students/me")).data);
+      setStudent(me);
 
-        // ✅ صح: أخذ الصورة من photoUrl مباشرة
-        const photoUrl = data.photoUrl || "";
-        localStorage.setItem("profileImage", photoUrl);
-        window.dispatchEvent(new Event("profileUpdated"));
+      localStorage.setItem("profileImage", me.photoUrl || "");
+      window.dispatchEvent(new Event("profileUpdated"));
 
-        // ✅ تحميل عدد طلبات المنح الدراسية بعد جلب id
-        const id = data.id;
-        axiosInstance
-          .get(`/api/students/${id}/scholarship-applications`)
-          .then((res) => {
-            setScholarshipsCount(res.data.length);
-          })
-          .catch((err) => {
-            console.error("Failed to load scholarships:", err);
-            setScholarshipsCount(0);
-          });
-      })
-      .catch((err) => console.error("Failed to load student info:", err));
-
-    // 2) عدد الكورسات
-    axiosInstance.get("/api/students/me/courses")
-      .then((res) => {
-        setCoursesCount(res.data.length);
-      })
-      .catch((err) => {
-        console.error("Failed to load courses count:", err);
-        setCoursesCount(0);
-      });
-
-    // 3) عدد الواجبات
-    axiosInstance.get("/api/students/me/assignments")
-      .then((res) => {
-        setAssignmentsCount(res.data.length);
-      })
-      .catch((err) => {
-        console.error("Failed to load assignments:", err);
-        setAssignmentsCount(0);
-      });
-
+      const [c, a, app] = await Promise.all([
+        axiosInstance.get("/api/students/me/courses"),
+        axiosInstance.get("/api/students/me/assignments"),
+        axiosInstance.get(`/api/students/${me.id}/scholarship-applications`)
+      ]);
+      setCourses(c.data);   setAssigns(a.data);   setApps(app.data);
+    })().catch(console.error);
   }, []);
 
+  /* ------------- derived ------------- */
+  const done     = assigns.filter(a => a.status === "DONE").length;
+  const pending  = assigns.length - done;
+  const barData  = [{ name:"Completed", value: done },
+                    { name:"Pending",   value: pending }];
+  const pieData  = [
+    { name:"Courses",      value: courses.length,   color: COLORS[0] },
+    { name:"Scholarships", value: apps.length,      color: COLORS[2] },
+    { name:"Assignments",  value: assigns.length,   color: COLORS[1] }
+  ];
+
+  /* ------------- UI ------------- */
   return (
-    <div className="student-dashboard">
-      <div className="header">
-        <h1> Welcome, {student.fullName || "Student"}!</h1>
+    <div className="dash-wrapper">
+      <h1 className="dash-title">
+        Welcome, {student.fullName?.split(" ")[0] || "Student"} 
+      </h1>
+
+      {/* quick stats */}
+      <div className="stats-grid">
+        <StatCard color={COLORS[0]} icon={<FaBookOpen />}
+                  label="Courses" value={courses.length}/>
+        <StatCard color={COLORS[1]} icon={<FaClipboardCheck />}
+                  label="Assignments" value={assigns.length}/>
+        <StatCard color={COLORS[2]} icon={<FaGraduationCap />}
+                  label="Scholarships" value={apps.length}/>
       </div>
 
-      <div className="overview-section">
-        <h2>Quick Overview</h2>
-        <div className="overview-cards">
-          <div className="card">
-            <h3> My Courses</h3>
-            <p>
-              You are enrolled in <strong>{coursesCount}</strong> course
-              {coursesCount !== 1 && "s"}.
-            </p>
-          </div>
-          <div className="card">
-            <h3> My Assignments</h3>
-            <p>
-              You have <strong>{assignmentsCount}</strong> assignment
-              {assignmentsCount !== 1 && "s"} to complete.
-            </p>
-          </div>
-          <div className="card">
-            <h3> Scholarships</h3>
-            <p>
-              You have applied to <strong>{scholarshipsCount}</strong> scholarship
-              {scholarshipsCount !== 1 && "s"}.
-            </p>
-          </div>
+      {/* charts */}
+      <div className="two-col">
+        <section className="panel">
+          <h3>Assignments Progress</h3>
+          <ResponsiveContainer width="100%" height={230}>
+            <BarChart data={barData}>
+              <CartesianGrid strokeDasharray="3 3"/>
+              <XAxis dataKey="name" tick={{fontSize:12}}/>
+              <YAxis allowDecimals={false}/>
+              <Tooltip />
+              <Bar dataKey="value" radius={[6,6,0,0]}>
+                {barData.map((_,i)=><Cell key={i} fill={COLORS[i]} />)}
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        </section>
+
+        <section className="panel">
+          <h3>My Overview</h3>
+          <ResponsiveContainer width="100%" height={230}>
+            <PieChart>
+              <Pie data={pieData} dataKey="value" innerRadius={45}
+                   outerRadius={75} label>
+                {pieData.map(d => (
+                  <Cell key={d.name} fill={d.color}/>
+                ))}
+              </Pie>
+              <Legend />
+              <Tooltip />
+            </PieChart>
+          </ResponsiveContainer>
+        </section>
+      </div>
+
+      {/* calendar + motivation */}
+      <section className="panel flex-box">
+        <div style={{flex:1}}>
+          <h3>Calendar</h3>
+          <Calendar
+            tileClassName={({date}) =>
+              assigns.some(a => a.dueDate &&
+               new Date(a.dueDate).toDateString()===date.toDateString())
+               ? "due-day" : ""
+            }
+          />
+          <small className="legend">
+            • highlighted days have assignment deadlines
+          </small>
         </div>
+
+        <MotivationCard quote={quote} onNew={()=>setQuote(randQuote())}/>
+      </section>
+    </div>
+  );
+}
+
+/* ---------------- components ---------------- */
+function StatCard({ icon, label, value, color }) {
+  return (
+    <div className="stat-card" style={{borderLeft:`6px solid ${color}`}}>
+      <div className="icon" style={{color}}>{icon}</div>
+      <div className="meta">
+        <span className="value">{value}</span>
+        <span className="label">{label}</span>
       </div>
     </div>
   );
-};
+}
 
-export default StudentDashboard;
+function MotivationCard({ quote, onNew }) {
+  return (
+    <div className="motive-card">
+      <FaQuoteLeft className="motive-icon"/>
+      <p className="motive-text">“{quote}”</p>
+      <button className="motive-btn" onClick={onNew}>New quote</button>
+    </div>
+  );
+}

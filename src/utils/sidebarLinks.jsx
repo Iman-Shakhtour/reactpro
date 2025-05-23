@@ -14,6 +14,11 @@ import { FaUser, FaCog } from "react-icons/fa";
 
 /* ---------- Admin links ---------- */
 export const adminLinks = [
+   {
+    to: "/dashboard/admin/stats",
+    label: "System Stats",
+    icon: <HiOutlineChartBar size={18} />,
+  },
   {
     to: "/dashboard/admin/manage-users",
     label: "Manage Users",
@@ -29,20 +34,11 @@ export const adminLinks = [
     label: "Manage Scholarships",
     icon: <HiOutlineAcademicCap size={18} />,
   },
-  {
-    to: "/dashboard/admin/stats",
-    label: "System Stats",
-    icon: <HiOutlineChartBar size={18} />,
-  },
-  {
-  to: "/dashboard/admin/scholarship-applications",
-  label: "Scholarship Applications",
-  icon: <HiOutlineClipboardDocumentList size={18} />,
  
-  
-    to: "/dashboard/admin/scholarship-applications",   // المسار الكامل
+  {
+    to: "/dashboard/admin/scholarship-applications",
     label: "Scholarship Applications",
-    icon: <HiDocumentText size={18} />,
+    icon: <HiOutlineClipboardDocumentList size={18} />,
   },
 ];
 /* ---------- Student links ---------- */
@@ -62,15 +58,16 @@ export const studentLinks = [
     label: "My Assignments",
     icon: <HiOutlineClipboardDocumentList size={18} />,
   },
-  {
-    to: "/dashboard/student/profile",
-    label: "My Profile",
-    icon: <FaUser size={16} />,
-  },
+  
   {
     to: "/dashboard/student/scholarships",
     label: "Scholarships",
     icon: <HiOutlineAcademicCap size={18} />,
+  },
+  {
+    to: "/dashboard/student/profile",
+    label: "My Profile",
+    icon: <FaUser size={16} />,
   },
   {
     to: "/dashboard/student/settings",
