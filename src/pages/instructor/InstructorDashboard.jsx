@@ -45,8 +45,9 @@ export default function InstructorDashboard() {
         setCourses(allCourses);
 
         /* 3) واجباتي */
-        const myAssign = (await axiosInstance.get("/api/assignments")).data.map(unwrap)
-                          .filter(a => a.instructorId === me.id);
+       const myAssign = (await axiosInstance.get("/api/assessments")).data.map(unwrap)
+  .filter(a => a.instructorId === me.id);
+
         setAssignments(myAssign);
 
         /* 4) تسليمات الطلبة */
