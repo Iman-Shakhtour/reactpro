@@ -1,70 +1,132 @@
-# Getting Started with Create React App
+# 📘 LMS Frontend (React)
+
+This is the frontend application for the **Learning Management System (LMS)**. It is built using **React.js**, organized by user roles (`admin`, `instructor`, `student`, `donor`), and interacts with the LMS backend via secured REST APIs (Spring Boot microservices).
+
+> ✅ Designed for multi-role access: **Admin, Instructor, Student, Donor**  
+> 🔐 Secure authentication using JWT tokens  
+> 📡 Inter-service communication is managed via the API Gateway in the backend
+
+---
+
+## 🔧 Project Setup
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+### Prerequisites
 
-In the project directory, you can run:
+- Node.js (v16+ recommended)
+- npm
 
-### `npm start`
+### Installation
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+```bash
+git clone https://github.com/Iman-Shakhtour/reactpro.git
+cd reactpro
+npm install
+```
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+### Running the App
 
-### `npm test`
+```bash
+npm start
+```
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+Open [http://localhost:3000](http://localhost:3000) in your browser.
 
-### `npm run build`
+---
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## 🗂️ Folder Structure
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+```
+src/
+├── api/                      # Axios instance and role-based API service files
+│   ├── adminApi.js
+│   ├── instructorApi.js
+│   ├── studentApi.js
+│   └── axiosInstance.js
+│
+├── components/              # Reusable components (Layout, Sidebar, Navbar, Routes)
+│
+├── pages/
+│   ├── admin/               # Admin dashboard pages
+│   ├── instructor/          # Instructor dashboard pages
+│   └── student/             # Student-facing pages
+│
+├── utils/                   # Utility functions and constants
+│
+├── App.jsx                  # Main app with routing and layout
+├── index.js                 # React entry point
+```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## ✨ Features
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### ✅ Admin
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+* Dashboard with statistics  
+* Add/edit/delete users  
+* Manage scholarships & applications  
+* View system statistics  
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+### ✅ Instructor
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+* Upload & manage course content  
+* Grade submitted assignments  
+* View enrolled students  
+* Manage profile & settings  
 
-## Learn More
+### ✅ Student
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+* View assigned courses  
+* Submit assignments  
+* Track grades and notifications  
+* Apply for scholarships  
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+---
 
-### Code Splitting
+## 🔐 Authentication
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+* JWT-based secure login/signup  
+* Role-based route protection using `PrivateRoute.js` and `ProtectedRoute.js`  
+* Axios interceptor automatically attaches the token for authenticated requests  
 
-### Analyzing the Bundle Size
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+## 📡 Backend Integration
 
-### Making a Progressive Web App
+This app connects to a **Spring Boot** backend structured into microservices:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+* **User Service** – manages authentication, user profiles, roles  
+* **Course Service** – handles courses, content, assignments  
+* **Enrollment Service** – tracks enrollments and student-course links  
+* **Notification Service** – sends updates to users  
+* **API Gateway** – routes and secures all frontend requests  
 
-### Advanced Configuration
+> Example backend repo: [https://github.com/your-username/lms-backend](https://github.com/your-username/lms-backend)
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+---
 
-### Deployment
+## 🧪 Testing
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+```bash
+npm test
+```
 
-### `npm run build` fails to minify
+Runs unit tests for components and logic.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
+
+## 🛠 Build for Production
+
+```bash
+npm run build
+```
+
+Builds the project in production mode.
+
+---
+
+## 📜 License
+
+This project is licensed under the MIT License.
